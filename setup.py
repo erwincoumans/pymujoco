@@ -196,7 +196,7 @@ CXX_FLAGS_TDS = CXX_FLAGS + '-DENABLE_TEST_ENVS ' + '-DNOMINMAX '
 
 pymujoco_ext = Extension(
     "pymujoco",
-    sources=sources+["python/pymujoco.cc"],
+    sources=sources,
     libraries=libraries,
     extra_compile_args=CXX_FLAGS_TDS.split(),
     include_dirs=include_dirs + ["."])
