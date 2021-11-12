@@ -12,72 +12,78 @@
 
     )pbdoc";
 
-  py::class_<mjModel>(m, "mjModel")
-   
-   .def_readonly("nq", &mjModel::nq)// number of generalized coordinates = dim(qpos)
-   .def_readonly("nv", &mjModel::nv)// number of degrees of freedom = dim(qvel)
-  
-    // ------------------------------- sizes
+    py::class_<PyMjModel>(m, "PyMjModel")
+    .def_readonly("nq", &PyMjModel::nq,                        R"pbdoc( number of generalized coordinates = dim(qpos))pbdoc")
+    .def_readonly("nv", &PyMjModel::nv,                        R"pbdoc( number of degrees of freedom = dim(qvel))pbdoc")
+    .def_readonly("nu", &PyMjModel::nu,                        R"pbdoc( number of actuators/controls = dim(ctrl))pbdoc")
+    .def_readonly("na", &PyMjModel::na,                        R"pbdoc( number of activation states = dim(act))pbdoc")
+    .def_readonly("nbody", &PyMjModel::nbody,                  R"pbdoc( number of bodies)pbdoc")
+    .def_readonly("njnt", &PyMjModel::njnt,                    R"pbdoc( number of joints)pbdoc")
+    .def_readonly("ngeom", &PyMjModel::ngeom,                  R"pbdoc( number of geoms)pbdoc")
+    .def_readonly("nsite", &PyMjModel::nsite,                  R"pbdoc( number of sites)pbdoc")
+    .def_readonly("ncam", &PyMjModel::ncam,                    R"pbdoc( number of cameras)pbdoc")
+    .def_readonly("nlight", &PyMjModel::nlight,                R"pbdoc( number of lights)pbdoc")
+    .def_readonly("nmesh", &PyMjModel::nmesh,                  R"pbdoc( number of meshes)pbdoc")
+    .def_readonly("nmeshvert", &PyMjModel::nmeshvert,          R"pbdoc( number of vertices in all meshes)pbdoc")
+    .def_readonly("nmeshtexvert", &PyMjModel::nmeshtexvert,    R"pbdoc( number of vertices with texcoords in all meshes)pbdoc")
+    .def_readonly("nmeshface", &PyMjModel::nmeshface,          R"pbdoc( number of triangular faces in all meshes)pbdoc")
+    .def_readonly("nmeshgraph", &PyMjModel::nmeshgraph,        R"pbdoc( number of ints in mesh auxiliary data)pbdoc")
+    .def_readonly("nskin", &PyMjModel::nskin,                  R"pbdoc( number of skins)pbdoc")
+    .def_readonly("nskinvert", &PyMjModel::nskinvert,          R"pbdoc( number of vertices in all skins)pbdoc")
+    .def_readonly("nskintexvert", &PyMjModel::nskintexvert,    R"pbdoc( number of vertiex with texcoords in all skins)pbdoc")
+    .def_readonly("nskinface", &PyMjModel::nskinface,          R"pbdoc( number of triangular faces in all skins)pbdoc")
+    .def_readonly("nskinbone", &PyMjModel::nskinbone,          R"pbdoc( number of bones in all skins)pbdoc")
+    .def_readonly("nskinbonevert", &PyMjModel::nskinbonevert,  R"pbdoc( number of vertices in all skin bones)pbdoc")
+    .def_readonly("nhfield", &PyMjModel::nhfield,              R"pbdoc( number of heightfields)pbdoc")
+    .def_readonly("nhfielddata", &PyMjModel::nhfielddata,      R"pbdoc( number of data points in all heightfields)pbdoc")
+    .def_readonly("ntex", &PyMjModel::ntex,                    R"pbdoc( number of textures)pbdoc")
+    .def_readonly("ntexdata", &PyMjModel::ntexdata,            R"pbdoc( number of bytes in texture rgb data)pbdoc")
+    .def_readonly("nmat", &PyMjModel::nmat,                    R"pbdoc( number of materials)pbdoc")
+    .def_readonly("npair", &PyMjModel::npair,                  R"pbdoc( number of predefined geom pairs)pbdoc")
+    .def_readonly("nexclude", &PyMjModel::nexclude,            R"pbdoc( number of excluded geom pairs)pbdoc")
+    .def_readonly("neq", &PyMjModel::neq,                      R"pbdoc( number of equality constraints)pbdoc")
+    .def_readonly("ntendon", &PyMjModel::ntendon,              R"pbdoc( number of tendons)pbdoc")
+    .def_readonly("nwrap", &PyMjModel::nwrap,                  R"pbdoc( number of wrap objects in all tendon paths)pbdoc")
+    .def_readonly("nsensor", &PyMjModel::nsensor,              R"pbdoc( number of sensors)pbdoc")
+    .def_readonly("nnumeric", &PyMjModel::nnumeric,            R"pbdoc( number of numeric custom fields)pbdoc")
+    .def_readonly("nnumericdata", &PyMjModel::nnumericdata,    R"pbdoc( number of mjtNums in all numeric fields)pbdoc")
+    .def_readonly("ntext", &PyMjModel::ntext,                  R"pbdoc( number of text custom fields)pbdoc")
+    .def_readonly("ntextdata", &PyMjModel::ntextdata,          R"pbdoc( number of mjtBytes in all text fields)pbdoc")
+    .def_readonly("ntuple", &PyMjModel::ntuple,                R"pbdoc( number of tuple custom fields)pbdoc")
+    .def_readonly("ntupledata", &PyMjModel::ntupledata,        R"pbdoc( number of objects in all tuple fields)pbdoc")
+    .def_readonly("nkey", &PyMjModel::nkey,                    R"pbdoc( number of keyframes)pbdoc")
+    .def_readonly("nmocap", &PyMjModel::nmocap,                R"pbdoc( number of mocap bodies)pbdoc")
+    .def_readonly("nuser_body", &PyMjModel::nuser_body,        R"pbdoc( number of mjtNums in body_user)pbdoc")
+    .def_readonly("nuser_jnt", &PyMjModel::nuser_jnt,          R"pbdoc( number of mjtNums in jnt_user)pbdoc")
+    .def_readonly("nuser_geom", &PyMjModel::nuser_geom,        R"pbdoc( number of mjtNums in geom_user)pbdoc")
+    .def_readonly("nuser_site", &PyMjModel::nuser_site,        R"pbdoc( number of mjtNums in site_user)pbdoc")
+    .def_readonly("nuser_cam", &PyMjModel::nuser_cam,          R"pbdoc( number of mjtNums in cam_user)pbdoc")
+    .def_readonly("nuser_tendon", &PyMjModel::nuser_tendon,    R"pbdoc( number of mjtNums in tendon_user)pbdoc")
+    .def_readonly("nuser_actuator", &PyMjModel::nuser_actuator,R"pbdoc( number of mjtNums in actuator_user)pbdoc")
+    .def_readonly("nuser_sensor", &PyMjModel::nuser_sensor,    R"pbdoc( number of mjtNums in sensor_user)pbdoc")
+    .def_readonly("nnames", &PyMjModel::nnames,                R"pbdoc( number of chars in all names)pbdoc")
+// sizes set after mjModel construction (only affect mjData)
+    .def_readonly("nM", &PyMjModel::nM,                        R"pbdoc( number of non-zeros in sparse inertia matrix)pbdoc")
+    .def_readonly("nemax", &PyMjModel::nemax,                  R"pbdoc( number of potential equality-constraint rows)pbdoc")
+    .def_readonly("njmax", &PyMjModel::njmax,                  R"pbdoc( number of available rows in constraint Jacobian)pbdoc")
+    .def_readonly("nconmax", &PyMjModel::nconmax,              R"pbdoc( number of potential contacts in contact list)pbdoc")
+    .def_readonly("nstack", &PyMjModel::nstack,                R"pbdoc( number of fields in mjData stack)pbdoc")
+    .def_readonly("nuserdata", &PyMjModel::nuserdata,          R"pbdoc( number of extra fields in mjData)pbdoc")
+    .def_readonly("nsensordata", &PyMjModel::nsensordata,      R"pbdoc( number of fields in sensor data vector)pbdoc")
+    .def_readonly("nbuffer", &PyMjModel::nbuffer,              R"pbdoc( number of bytes in buffer)pbdoc")
 
-    // sizes needed at mjModel construction
-    .def_readonly("nu", &mjModel::nu)                         // number of actuators/controls = dim(ctrl)
-    .def_readonly("na", &mjModel::na)                         // number of activation states = dim(act)
-    .def_readonly("nbody", &mjModel::nbody)                      // number of bodies
-    .def_readonly("njnt", &mjModel::njnt)                       // number of joints
-    .def_readonly("ngeom", &mjModel::ngeom)                      // number of geoms
-    .def_readonly("nsite", &mjModel::nsite)                      // number of sites
-    .def_readonly("ncam", &mjModel::ncam)                       // number of cameras
-    .def_readonly("nlight", &mjModel::nlight)                     // number of lights
-    .def_readonly("nmesh", &mjModel::nmesh)                      // number of meshes
-    .def_readonly("nmeshvert", &mjModel::nmeshvert)                  // number of vertices in all meshes
-    .def_readonly("nmeshtexvert", &mjModel::nmeshtexvert)               // number of vertices with texcoords in all meshes
-    .def_readonly("nmeshface", &mjModel::nmeshface)                  // number of triangular faces in all meshes
-    .def_readonly("nmeshgraph", &mjModel::nmeshgraph)                 // number of ints in mesh auxiliary data
-    .def_readonly("nskin", &mjModel::nskin)                      // number of skins
-    .def_readonly("nskinvert", &mjModel::nskinvert)                  // number of vertices in all skins
-    .def_readonly("nskintexvert", &mjModel::nskintexvert)               // number of vertiex with texcoords in all skins
-    .def_readonly("nskinface", &mjModel::nskinface)                  // number of triangular faces in all skins
-    .def_readonly("nskinbone", &mjModel::nskinbone)                  // number of bones in all skins
-    .def_readonly("nskinbonevert", &mjModel::nskinbonevert)              // number of vertices in all skin bones
-    .def_readonly("nhfield", &mjModel::nhfield)                    // number of heightfields
-    .def_readonly("nhfielddata", &mjModel::nhfielddata)                // number of data points in all heightfields
-    .def_readonly("ntex", &mjModel::ntex)                       // number of textures
-    .def_readonly("ntexdata", &mjModel::ntexdata)                   // number of bytes in texture rgb data
-    .def_readonly("nmat", &mjModel::nmat)                       // number of materials
-    .def_readonly("npair", &mjModel::npair)                      // number of predefined geom pairs
-    .def_readonly("nexclude", &mjModel::nexclude)                   // number of excluded geom pairs
-    .def_readonly("neq", &mjModel::neq)                        // number of equality constraints
-    .def_readonly("ntendon", &mjModel::ntendon)                    // number of tendons
-    .def_readonly("nwrap", &mjModel::nwrap)                      // number of wrap objects in all tendon paths
-    .def_readonly("nsensor", &mjModel::nsensor)                    // number of sensors
-    .def_readonly("nnumeric", &mjModel::nnumeric)                   // number of numeric custom fields
-    .def_readonly("nnumericdata", &mjModel::nnumericdata)               // number of mjtNums in all numeric fields
-    .def_readonly("ntext", &mjModel::ntext)                      // number of text custom fields
-    .def_readonly("ntextdata", &mjModel::ntextdata)                  // number of mjtBytes in all text fields
-    .def_readonly("ntuple", &mjModel::ntuple)                     // number of tuple custom fields
-    .def_readonly("ntupledata", &mjModel::ntupledata)                 // number of objects in all tuple fields
-    .def_readonly("nkey", &mjModel::nkey)                       // number of keyframes
-    .def_readonly("nmocap", &mjModel::nmocap)                     // number of mocap bodies
-    .def_readonly("nuser_body", &mjModel::nuser_body)                 // number of mjtNums in body_user
-    .def_readonly("nuser_jnt", &mjModel::nuser_jnt)                  // number of mjtNums in jnt_user
-    .def_readonly("nuser_geom", &mjModel::nuser_geom)                 // number of mjtNums in geom_user
-    .def_readonly("nuser_site", &mjModel::nuser_site)                 // number of mjtNums in site_user
-    .def_readonly("nuser_cam", &mjModel::nuser_cam)                  // number of mjtNums in cam_user
-    .def_readonly("nuser_tendon", &mjModel::nuser_tendon)               // number of mjtNums in tendon_user
-    .def_readonly("nuser_actuator", &mjModel::nuser_actuator)             // number of mjtNums in actuator_user
-    .def_readonly("nuser_sensor", &mjModel::nuser_sensor)               // number of mjtNums in sensor_user
-    .def_readonly("nnames", &mjModel::nnames)                     // number of chars in all names
+// default generalized coordinates
+    .def_readonly("qpos0", &PyMjModel::qpos0,                  R"pbdoc(number of degrees of freedom = dim(qvel))pbdoc")
+    .def_readonly("qpos_spring", &PyMjModel::qpos_spring,      R"pbdoc(reference pose for springs (nq x 1))pbdoc")
+        
+// bodies
+    .def_readonly("body_parentid", &PyMjModel::body_parentid,  R"pbdoc( id of body's parent                      (nbody x 1))pbdoc")
+    .def_readonly("body_rootid", &PyMjModel::body_rootid,        R"pbdoc( id of root above body                    (nbody x 1))pbdoc")
+    .def_readonly("body_weldid", &PyMjModel::body_weldid,        R"pbdoc( id of body that this body is welded to   (nbody x 1))pbdoc")
+  ;
 
-    // sizes set after mjModel construction (only affect mjData)
-    .def_readonly("nM", &mjModel::nM)                         // number of non-zeros in sparse inertia matrix
-    .def_readonly("nemax", &mjModel::nemax)                      // number of potential equality-constraint rows
-    .def_readonly("njmax", &mjModel::njmax)                      // number of available rows in constraint Jacobian
-    .def_readonly("nconmax", &mjModel::nconmax)                    // number of potential contacts in contact list
-    .def_readonly("nstack", &mjModel::nstack)                     // number of fields in mjData stack
-    .def_readonly("nuserdata", &mjModel::nuserdata)                  // number of extra fields in mjData
-    .def_readonly("nsensordata", &mjModel::nsensordata)                // number of fields in sensor data vector
-    
-     .def_readonly("nbuffer", &mjModel::nbuffer)                    // number of bytes in buffer
+#if 0
+    //todo
 
     // ------------------------------- options and statistics
 
@@ -85,19 +91,9 @@
     //mjVisual vis;                   // visualization options
     //mjStatistic stat;               // model statistics
 
-    // ------------------------------- buffers
-
-    // main buffer
-    //void*     buffer;               // main buffer; all pointers point in it    (nbuffer)
-
-    // default generalized coordinates
-    .def_readonly("qpos0", &mjModel::qpos0)                // qpos values at default pose              (nq x 1)
-    .def_readonly("qpos_spring", &mjModel::qpos_spring)          // reference pose for springs               (nq x 1)
-
-    // bodies
-    .def_readonly("body_parentid", &mjModel::body_parentid)        // id of body's parent                      (nbody x 1)
-    .def_readonly("body_rootid", &mjModel::body_rootid)          // id of root above body                    (nbody x 1)
-    .def_readonly("body_weldid", &mjModel::body_weldid)          // id of body that this body is welded to   (nbody x 1)
+   
+    
+    
     .def_readonly("body_mocapid", &mjModel::body_mocapid)         // id of mocap data; -1: none               (nbody x 1)
     .def_readonly("body_jntnum", &mjModel::body_jntnum)          // number of joints for this body           (nbody x 1)
     .def_readonly("body_jntadr", &mjModel::body_jntadr)          // start addr of joints; -1: no joints      (nbody x 1)
@@ -117,272 +113,272 @@
     .def_readonly("body_inertia", &mjModel::body_inertia)         // diagonal inertia in ipos/iquat frame     (nbody x 3)
     .def_readonly("body_invweight0", &mjModel::body_invweight0)      // mean inv inert in qpos0 (trn, rot)       (nbody x 2)
     //.def_readonly("body_user", &mjModel::body_user)            // user data                                (nbody x nuser_body)
-#if 0
+
     // joints
-    int*      jnt_type;             // type of joint (mjtJoint)                 (njnt x 1)
-    int*      jnt_qposadr;          // start addr in 'qpos' for joint's data    (njnt x 1)
-    int*      jnt_dofadr;           // start addr in 'qvel' for joint's data    (njnt x 1)
-    int*      jnt_bodyid;           // id of joint's body                       (njnt x 1)
-    int*      jnt_group;            // group for visibility                     (njnt x 1)
-    mjtByte*  jnt_limited;          // does joint have limits                   (njnt x 1)
-    mjtNum*   jnt_solref;           // constraint solver reference: limit       (njnt x mjNREF)
-    mjtNum*   jnt_solimp;           // constraint solver impedance: limit       (njnt x mjNIMP)
-    mjtNum*   jnt_pos;              // local anchor position                    (njnt x 3)
-    mjtNum*   jnt_axis;             // local joint axis                         (njnt x 3)
-    mjtNum*   jnt_stiffness;        // stiffness coefficient                    (njnt x 1)
-    mjtNum*   jnt_range;            // joint limits                             (njnt x 2)
-    mjtNum*   jnt_margin;           // min distance for limit detection         (njnt x 1)
-    mjtNum*   jnt_user;             // user data                                (njnt x nuser_jnt)
+    .def_readonly("jnt_type", &mjModel::             // type of joint (mjtJoint)                 (njnt x 1)
+    .def_readonly("jnt_qposadr", &mjModel::          // start addr in 'qpos' for joint's data    (njnt x 1)
+    .def_readonly("jnt_dofadr", &mjModel::           // start addr in 'qvel' for joint's data    (njnt x 1)
+    .def_readonly("jnt_bodyid", &mjModel::           // id of joint's body                       (njnt x 1)
+    .def_readonly("jnt_group", &mjModel::            // group for visibility                     (njnt x 1)
+    .def_readonly("jnt_limited", &mjModel::          // does joint have limits                   (njnt x 1)
+    .def_readonly("jnt_solref", &mjModel::           // constraint solver reference: limit       (njnt x mjNREF)
+    .def_readonly("jnt_solimp", &mjModel::           // constraint solver impedance: limit       (njnt x mjNIMP)
+    .def_readonly("jnt_pos", &mjModel::              // local anchor position                    (njnt x 3)
+    .def_readonly("jnt_axis", &mjModel::             // local joint axis                         (njnt x 3)
+    .def_readonly("jnt_stiffness", &mjModel::        // stiffness coefficient                    (njnt x 1)
+    .def_readonly("jnt_range", &mjModel::            // joint limits                             (njnt x 2)
+    .def_readonly("jnt_margin", &mjModel::           // min distance for limit detection         (njnt x 1)
+    .def_readonly("jnt_user", &mjModel::             // user data                                (njnt x nuser_jnt)
 
     // dofs
-    int*      dof_bodyid;           // id of dof's body                         (nv x 1)
-    int*      dof_jntid;            // id of dof's joint                        (nv x 1)
-    int*      dof_parentid;         // id of dof's parent; -1: none             (nv x 1)
-    int*      dof_Madr;             // dof address in M-diagonal                (nv x 1)
-    int*      dof_simplenum;        // number of consecutive simple dofs        (nv x 1)
-    mjtNum*   dof_solref;           // constraint solver reference:frictionloss (nv x mjNREF)
-    mjtNum*   dof_solimp;           // constraint solver impedance:frictionloss (nv x mjNIMP)
-    mjtNum*   dof_frictionloss;     // dof friction loss                        (nv x 1)
-    mjtNum*   dof_armature;         // dof armature inertia/mass                (nv x 1)
-    mjtNum*   dof_damping;          // damping coefficient                      (nv x 1)
-    mjtNum*   dof_invweight0;       // diag. inverse inertia in qpos0           (nv x 1)
-    mjtNum*   dof_M0;               // diag. inertia in qpos0                   (nv x 1)
+    .def_readonly("dof_bodyid", &mjModel::           // id of dof's body                         (nv x 1)
+    .def_readonly("dof_jntid", &mjModel::            // id of dof's joint                        (nv x 1)
+    .def_readonly("dof_parentid", &mjModel::         // id of dof's parent; -1: none             (nv x 1)
+    .def_readonly("dof_Madr", &mjModel::             // dof address in M-diagonal                (nv x 1)
+    .def_readonly("dof_simplenum", &mjModel::        // number of consecutive simple dofs        (nv x 1)
+    .def_readonly("dof_solref", &mjModel::           // constraint solver reference:frictionloss (nv x mjNREF)
+    .def_readonly("dof_solimp", &mjModel::           // constraint solver impedance:frictionloss (nv x mjNIMP)
+    .def_readonly("dof_frictionloss", &mjModel::     // dof friction loss                        (nv x 1)
+    .def_readonly("dof_armature", &mjModel::         // dof armature inertia/mass                (nv x 1)
+    .def_readonly("dof_damping", &mjModel::          // damping coefficient                      (nv x 1)
+    .def_readonly("dof_invweight0", &mjModel::       // diag. inverse inertia in qpos0           (nv x 1)
+    .def_readonly("dof_M0", &mjModel::               // diag. inertia in qpos0                   (nv x 1)
 
     // geoms
-    int*      geom_type;            // geometric type (mjtGeom)                 (ngeom x 1)
-    int*      geom_contype;         // geom contact type                        (ngeom x 1)
-    int*      geom_conaffinity;     // geom contact affinity                    (ngeom x 1)
-    int*      geom_condim;          // contact dimensionality (1, 3, 4, 6)      (ngeom x 1)
-    int*      geom_bodyid;          // id of geom's body                        (ngeom x 1)
-    int*      geom_dataid;          // id of geom's mesh/hfield (-1: none)      (ngeom x 1)
-    int*      geom_matid;           // material id for rendering                (ngeom x 1)
-    int*      geom_group;           // group for visibility                     (ngeom x 1)
-    int*      geom_priority;        // geom contact priority                    (ngeom x 1)
-    mjtByte*  geom_sameframe;       // same as body frame (1) or iframe (2)     (ngeom x 1)
-    mjtNum*   geom_solmix;          // mixing coef for solref/imp in geom pair  (ngeom x 1)
-    mjtNum*   geom_solref;          // constraint solver reference: contact     (ngeom x mjNREF)
-    mjtNum*   geom_solimp;          // constraint solver impedance: contact     (ngeom x mjNIMP)
-    mjtNum*   geom_size;            // geom-specific size parameters            (ngeom x 3)
-    mjtNum*   geom_rbound;          // radius of bounding sphere                (ngeom x 1)
-    mjtNum*   geom_pos;             // local position offset rel. to body       (ngeom x 3)
-    mjtNum*   geom_quat;            // local orientation offset rel. to body    (ngeom x 4)
-    mjtNum*   geom_friction;        // friction for (slide, spin, roll)         (ngeom x 3)
-    mjtNum*   geom_margin;          // detect contact if dist<margin            (ngeom x 1)
-    mjtNum*   geom_gap;             // include in solver if dist<margin-gap     (ngeom x 1)
-    mjtNum*   geom_user;            // user data                                (ngeom x nuser_geom)
-    float*    geom_rgba;            // rgba when material is omitted            (ngeom x 4)
+    .def_readonly("geom_type", &mjModel::            // geometric type (mjtGeom)                 (ngeom x 1)
+    .def_readonly("geom_contype", &mjModel::         // geom contact type                        (ngeom x 1)
+    .def_readonly("geom_conaffinity", &mjModel::     // geom contact affinity                    (ngeom x 1)
+    .def_readonly("geom_condim", &mjModel::          // contact dimensionality (1, 3, 4, 6)      (ngeom x 1)
+    .def_readonly("geom_bodyid", &mjModel::          // id of geom's body                        (ngeom x 1)
+    .def_readonly("geom_dataid", &mjModel::          // id of geom's mesh/hfield (-1: none)      (ngeom x 1)
+    .def_readonly("geom_matid", &mjModel::           // material id for rendering                (ngeom x 1)
+    .def_readonly("geom_group", &mjModel::           // group for visibility                     (ngeom x 1)
+    .def_readonly("geom_priority", &mjModel::        // geom contact priority                    (ngeom x 1)
+    .def_readonly("geom_sameframe", &mjModel::       // same as body frame (1) or iframe (2)     (ngeom x 1)
+    .def_readonly("geom_solmix", &mjModel::          // mixing coef for solref/imp in geom pair  (ngeom x 1)
+    .def_readonly("geom_solref", &mjModel::          // constraint solver reference: contact     (ngeom x mjNREF)
+    .def_readonly("geom_solimp", &mjModel::          // constraint solver impedance: contact     (ngeom x mjNIMP)
+    .def_readonly("geom_size", &mjModel::            // geom-specific size parameters            (ngeom x 3)
+    .def_readonly("geom_rbound", &mjModel::          // radius of bounding sphere                (ngeom x 1)
+    .def_readonly("geom_pos", &mjModel::             // local position offset rel. to body       (ngeom x 3)
+    .def_readonly("geom_quat", &mjModel::            // local orientation offset rel. to body    (ngeom x 4)
+    .def_readonly("geom_friction", &mjModel::        // friction for (slide, spin, roll)         (ngeom x 3)
+    .def_readonly("geom_margin", &mjModel::          // detect contact if dist<margin            (ngeom x 1)
+    .def_readonly("geom_gap", &mjModel::             // include in solver if dist<margin-gap     (ngeom x 1)
+    .def_readonly("geom_user", &mjModel::            // user data                                (ngeom x nuser_geom)
+    .def_readonly("geom_rgba", &mjModel::            // rgba when material is omitted            (ngeom x 4)
 
     // sites
-    int*      site_type;            // geom type for rendering (mjtGeom)        (nsite x 1)
-    int*      site_bodyid;          // id of site's body                        (nsite x 1)
-    int*      site_matid;           // material id for rendering                (nsite x 1)
-    int*      site_group;           // group for visibility                     (nsite x 1)
-    mjtByte*  site_sameframe;       // same as body frame (1) or iframe (2)     (nsite x 1)
-    mjtNum*   site_size;            // geom size for rendering                  (nsite x 3)
-    mjtNum*   site_pos;             // local position offset rel. to body       (nsite x 3)
-    mjtNum*   site_quat;            // local orientation offset rel. to body    (nsite x 4)
-    mjtNum*   site_user;            // user data                                (nsite x nuser_site)
-    float*    site_rgba;            // rgba when material is omitted            (nsite x 4)
+    .def_readonly("site_type", &mjModel::            // geom type for rendering (mjtGeom)        (nsite x 1)
+    .def_readonly("site_bodyid", &mjModel::          // id of site's body                        (nsite x 1)
+    .def_readonly("site_matid", &mjModel::           // material id for rendering                (nsite x 1)
+    .def_readonly("site_group", &mjModel::           // group for visibility                     (nsite x 1)
+    .def_readonly("site_sameframe", &mjModel::       // same as body frame (1) or iframe (2)     (nsite x 1)
+    .def_readonly("site_size", &mjModel::            // geom size for rendering                  (nsite x 3)
+    .def_readonly("site_pos", &mjModel::             // local position offset rel. to body       (nsite x 3)
+    .def_readonly("site_quat", &mjModel::            // local orientation offset rel. to body    (nsite x 4)
+    .def_readonly("site_user", &mjModel::            // user data                                (nsite x nuser_site)
+    .def_readonly("site_rgba", &mjModel::            // rgba when material is omitted            (nsite x 4)
 
     // cameras
-    int*      cam_mode;             // camera tracking mode (mjtCamLight)       (ncam x 1)
-    int*      cam_bodyid;           // id of camera's body                      (ncam x 1)
-    int*      cam_targetbodyid;     // id of targeted body; -1: none            (ncam x 1)
-    mjtNum*   cam_pos;              // position rel. to body frame              (ncam x 3)
-    mjtNum*   cam_quat;             // orientation rel. to body frame           (ncam x 4)
-    mjtNum*   cam_poscom0;          // global position rel. to sub-com in qpos0 (ncam x 3)
-    mjtNum*   cam_pos0;             // global position rel. to body in qpos0    (ncam x 3)
-    mjtNum*   cam_mat0;             // global orientation in qpos0              (ncam x 9)
-    mjtNum*   cam_fovy;             // y-field of view (deg)                    (ncam x 1)
-    mjtNum*   cam_ipd;              // inter-pupilary distance                  (ncam x 1)
-    mjtNum*   cam_user;             // user data                                (ncam x nuser_cam)
+    .def_readonly("cam_mode", &mjModel::             // camera tracking mode (mjtCamLight)       (ncam x 1)
+    .def_readonly("cam_bodyid", &mjModel::           // id of camera's body                      (ncam x 1)
+    .def_readonly("cam_targetbodyid", &mjModel::     // id of targeted body; -1: none            (ncam x 1)
+    .def_readonly("cam_pos", &mjModel::              // position rel. to body frame              (ncam x 3)
+    .def_readonly("cam_quat", &mjModel::             // orientation rel. to body frame           (ncam x 4)
+    .def_readonly("cam_poscom0", &mjModel::          // global position rel. to sub-com in qpos0 (ncam x 3)
+    .def_readonly("cam_pos0", &mjModel::             // global position rel. to body in qpos0    (ncam x 3)
+    .def_readonly("cam_mat0", &mjModel::             // global orientation in qpos0              (ncam x 9)
+    .def_readonly("cam_fovy", &mjModel::             // y-field of view (deg)                    (ncam x 1)
+    .def_readonly("cam_ipd", &mjModel::              // inter-pupilary distance                  (ncam x 1)
+    .def_readonly("cam_user", &mjModel::             // user data                                (ncam x nuser_cam)
 
     // lights
-    int*      light_mode;           // light tracking mode (mjtCamLight)        (nlight x 1)
-    int*      light_bodyid;         // id of light's body                       (nlight x 1)
-    int*      light_targetbodyid;   // id of targeted body; -1: none            (nlight x 1)
-    mjtByte*  light_directional;    // directional light                        (nlight x 1)
-    mjtByte*  light_castshadow;     // does light cast shadows                  (nlight x 1)
-    mjtByte*  light_active;         // is light on                              (nlight x 1)
-    mjtNum*   light_pos;            // position rel. to body frame              (nlight x 3)
-    mjtNum*   light_dir;            // direction rel. to body frame             (nlight x 3)
-    mjtNum*   light_poscom0;        // global position rel. to sub-com in qpos0 (nlight x 3)
-    mjtNum*   light_pos0;           // global position rel. to body in qpos0    (nlight x 3)
-    mjtNum*   light_dir0;           // global direction in qpos0                (nlight x 3)
-    float*    light_attenuation;    // OpenGL attenuation (quadratic model)     (nlight x 3)
-    float*    light_cutoff;         // OpenGL cutoff                            (nlight x 1)
-    float*    light_exponent;       // OpenGL exponent                          (nlight x 1)
-    float*    light_ambient;        // ambient rgb (alpha=1)                    (nlight x 3)
-    float*    light_diffuse;        // diffuse rgb (alpha=1)                    (nlight x 3)
-    float*    light_specular;       // specular rgb (alpha=1)                   (nlight x 3)
+    .def_readonly("light_mode", &mjModel::           // light tracking mode (mjtCamLight)        (nlight x 1)
+    .def_readonly("light_bodyid", &mjModel::         // id of light's body                       (nlight x 1)
+    .def_readonly("light_targetbodyid", &mjModel::   // id of targeted body; -1: none            (nlight x 1)
+    .def_readonly("light_directional", &mjModel::    // directional light                        (nlight x 1)
+    .def_readonly("light_castshadow", &mjModel::     // does light cast shadows                  (nlight x 1)
+    .def_readonly("light_active", &mjModel::         // is light on                              (nlight x 1)
+    .def_readonly("light_pos", &mjModel::            // position rel. to body frame              (nlight x 3)
+    .def_readonly("light_dir", &mjModel::            // direction rel. to body frame             (nlight x 3)
+    .def_readonly("light_poscom0", &mjModel::        // global position rel. to sub-com in qpos0 (nlight x 3)
+    .def_readonly("light_pos0", &mjModel::           // global position rel. to body in qpos0    (nlight x 3)
+    .def_readonly("light_dir0", &mjModel::           // global direction in qpos0                (nlight x 3)
+    .def_readonly("light_attenuation", &mjModel::    // OpenGL attenuation (quadratic model)     (nlight x 3)
+    .def_readonly("light_cutoff", &mjModel::         // OpenGL cutoff                            (nlight x 1)
+    .def_readonly("light_exponent", &mjModel::       // OpenGL exponent                          (nlight x 1)
+    .def_readonly("light_ambient", &mjModel::        // ambient rgb (alpha=1)                    (nlight x 3)
+    .def_readonly("light_diffuse", &mjModel::        // diffuse rgb (alpha=1)                    (nlight x 3)
+    .def_readonly("light_specular", &mjModel::       // specular rgb (alpha=1)                   (nlight x 3)
 
     // meshes
-    int*      mesh_vertadr;         // first vertex address                     (nmesh x 1)
-    int*      mesh_vertnum;         // number of vertices                       (nmesh x 1)
-    int*      mesh_texcoordadr;     // texcoord data address; -1: no texcoord   (nmesh x 1)
-    int*      mesh_faceadr;         // first face address                       (nmesh x 1)
-    int*      mesh_facenum;         // number of faces                          (nmesh x 1)
-    int*      mesh_graphadr;        // graph data address; -1: no graph         (nmesh x 1)
-    float*    mesh_vert;            // vertex positions for all meshe           (nmeshvert x 3)
-    float*    mesh_normal;          // vertex normals for all meshes            (nmeshvert x 3)
-    float*    mesh_texcoord;        // vertex texcoords for all meshes          (nmeshtexvert x 2)
-    int*      mesh_face;            // triangle face data                       (nmeshface x 3)
-    int*      mesh_graph;           // convex graph data                        (nmeshgraph x 1)
+    .def_readonly("mesh_vertadr", &mjModel::         // first vertex address                     (nmesh x 1)
+    .def_readonly("mesh_vertnum", &mjModel::         // number of vertices                       (nmesh x 1)
+    .def_readonly("mesh_texcoordadr", &mjModel::     // texcoord data address; -1: no texcoord   (nmesh x 1)
+    .def_readonly("mesh_faceadr", &mjModel::         // first face address                       (nmesh x 1)
+    .def_readonly("mesh_facenum", &mjModel::         // number of faces                          (nmesh x 1)
+    .def_readonly("mesh_graphadr", &mjModel::        // graph data address; -1: no graph         (nmesh x 1)
+    .def_readonly("mesh_vert", &mjModel::            // vertex positions for all meshe           (nmeshvert x 3)
+    .def_readonly("mesh_normal", &mjModel::          // vertex normals for all meshes            (nmeshvert x 3)
+    .def_readonly("mesh_texcoord", &mjModel::        // vertex texcoords for all meshes          (nmeshtexvert x 2)
+    .def_readonly("mesh_face", &mjModel::            // triangle face data                       (nmeshface x 3)
+    .def_readonly("mesh_graph", &mjModel::           // convex graph data                        (nmeshgraph x 1)
 
     // skins
-    int*      skin_matid;           // skin material id; -1: none               (nskin x 1)
-    float*    skin_rgba;            // skin rgba                                (nskin x 4)
-    float*    skin_inflate;         // inflate skin in normal direction         (nskin x 1)
-    int*      skin_vertadr;         // first vertex address                     (nskin x 1)
-    int*      skin_vertnum;         // number of vertices                       (nskin x 1)
-    int*      skin_texcoordadr;     // texcoord data address; -1: no texcoord   (nskin x 1)
-    int*      skin_faceadr;         // first face address                       (nskin x 1)
-    int*      skin_facenum;         // number of faces                          (nskin x 1)
-    int*      skin_boneadr;         // first bone in skin                       (nskin x 1)
-    int*      skin_bonenum;         // number of bones in skin                  (nskin x 1)
-    float*    skin_vert;            // vertex positions for all skin meshes     (nskinvert x 3)
-    float*    skin_texcoord;        // vertex texcoords for all skin meshes     (nskintexvert x 2)
-    int*      skin_face;            // triangle faces for all skin meshes       (nskinface x 3)
-    int*      skin_bonevertadr;     // first vertex in each bone                (nskinbone x 1)
-    int*      skin_bonevertnum;     // number of vertices in each bone          (nskinbone x 1)
-    float*    skin_bonebindpos;     // bind pos of each bone                    (nskinbone x 3)
-    float*    skin_bonebindquat;    // bind quat of each bone                   (nskinbone x 4)
-    int*      skin_bonebodyid;      // body id of each bone                     (nskinbone x 1)
-    int*      skin_bonevertid;      // mesh ids of vertices in each bone        (nskinbonevert x 1)
-    float*    skin_bonevertweight;  // weights of vertices in each bone         (nskinbonevert x 1)
+    .def_readonly("skin_matid", &mjModel::           // skin material id; -1: none               (nskin x 1)
+    .def_readonly("skin_rgba", &mjModel::            // skin rgba                                (nskin x 4)
+    .def_readonly("skin_inflate", &mjModel::         // inflate skin in normal direction         (nskin x 1)
+    .def_readonly("skin_vertadr", &mjModel::         // first vertex address                     (nskin x 1)
+    .def_readonly("skin_vertnum", &mjModel::         // number of vertices                       (nskin x 1)
+    .def_readonly("skin_texcoordadr", &mjModel::     // texcoord data address; -1: no texcoord   (nskin x 1)
+    .def_readonly("skin_faceadr", &mjModel::         // first face address                       (nskin x 1)
+    .def_readonly("skin_facenum", &mjModel::         // number of faces                          (nskin x 1)
+    .def_readonly("skin_boneadr", &mjModel::         // first bone in skin                       (nskin x 1)
+    .def_readonly("skin_bonenum", &mjModel::         // number of bones in skin                  (nskin x 1)
+    .def_readonly("skin_vert", &mjModel::            // vertex positions for all skin meshes     (nskinvert x 3)
+    .def_readonly("skin_texcoord", &mjModel::        // vertex texcoords for all skin meshes     (nskintexvert x 2)
+    .def_readonly("skin_face", &mjModel::            // triangle faces for all skin meshes       (nskinface x 3)
+    .def_readonly("skin_bonevertadr", &mjModel::     // first vertex in each bone                (nskinbone x 1)
+    .def_readonly("skin_bonevertnum", &mjModel::     // number of vertices in each bone          (nskinbone x 1)
+    .def_readonly("skin_bonebindpos", &mjModel::     // bind pos of each bone                    (nskinbone x 3)
+    .def_readonly("skin_bonebindquat", &mjModel::    // bind quat of each bone                   (nskinbone x 4)
+    .def_readonly("skin_bonebodyid", &mjModel::      // body id of each bone                     (nskinbone x 1)
+    .def_readonly("skin_bonevertid", &mjModel::      // mesh ids of vertices in each bone        (nskinbonevert x 1)
+    .def_readonly("skin_bonevertweight", &mjModel::  // weights of vertices in each bone         (nskinbonevert x 1)
 
     // height fields
-    mjtNum*   hfield_size;          // (x, y, z_top, z_bottom)                  (nhfield x 4)
-    int*      hfield_nrow;          // number of rows in grid                   (nhfield x 1)
-    int*      hfield_ncol;          // number of columns in grid                (nhfield x 1)
-    int*      hfield_adr;           // address in hfield_data                   (nhfield x 1)
-    float*    hfield_data;          // elevation data                           (nhfielddata x 1)
+    .def_readonly("hfield_size", &mjModel::          // (x, y, z_top, z_bottom)                  (nhfield x 4)
+    .def_readonly("hfield_nrow", &mjModel::          // number of rows in grid                   (nhfield x 1)
+    .def_readonly("hfield_ncol", &mjModel::          // number of columns in grid                (nhfield x 1)
+    .def_readonly("hfield_adr", &mjModel::           // address in hfield_data                   (nhfield x 1)
+    .def_readonly("hfield_data", &mjModel::          // elevation data                           (nhfielddata x 1)
 
     // textures
-    int*      tex_type;             // texture type (mjtTexture)                (ntex x 1)
-    int*      tex_height;           // number of rows in texture image          (ntex x 1)
-    int*      tex_width;            // number of columns in texture image       (ntex x 1)
-    int*      tex_adr;              // address in rgb                           (ntex x 1)
-    mjtByte*  tex_rgb;              // rgb (alpha = 1)                          (ntexdata x 1)
+    .def_readonly("tex_type", &mjModel::             // texture type (mjtTexture)                (ntex x 1)
+    .def_readonly("tex_height", &mjModel::           // number of rows in texture image          (ntex x 1)
+    .def_readonly("tex_width", &mjModel::            // number of columns in texture image       (ntex x 1)
+    .def_readonly("tex_adr", &mjModel::              // address in rgb                           (ntex x 1)
+    .def_readonly("tex_rgb", &mjModel::              // rgb (alpha = 1)                          (ntexdata x 1)
 
     // materials
-    int*      mat_texid;            // texture id; -1: none                     (nmat x 1)
-    mjtByte*  mat_texuniform;       // make texture cube uniform                (nmat x 1)
-    float*    mat_texrepeat;        // texture repetition for 2d mapping        (nmat x 2)
-    float*    mat_emission;         // emission (x rgb)                         (nmat x 1)
-    float*    mat_specular;         // specular (x white)                       (nmat x 1)
-    float*    mat_shininess;        // shininess coef                           (nmat x 1)
-    float*    mat_reflectance;      // reflectance (0: disable)                 (nmat x 1)
-    float*    mat_rgba;             // rgba                                     (nmat x 4)
+    .def_readonly("mat_texid", &mjModel::            // texture id; -1: none                     (nmat x 1)
+    .def_readonly("at_texuniform", &mjModel::       // make texture cube uniform                (nmat x 1)
+    .def_readonly("mat_texrepeat", &mjModel::        // texture repetition for 2d mapping        (nmat x 2)
+    .def_readonly("mat_emission", &mjModel::         // emission (x rgb)                         (nmat x 1)
+    .def_readonly("mat_specular", &mjModel::         // specular (x white)                       (nmat x 1)
+    .def_readonly("mat_shininess", &mjModel::        // shininess coef                           (nmat x 1)
+    .def_readonly("mat_reflectance", &mjModel::      // reflectance (0: disable)                 (nmat x 1)
+    .def_readonly("mat_rgba", &mjModel::             // rgba                                     (nmat x 4)
 
     // predefined geom pairs for collision detection; has precedence over exclude
-    int*      pair_dim;             // contact dimensionality                   (npair x 1)
-    int*      pair_geom1;           // id of geom1                              (npair x 1)
-    int*      pair_geom2;           // id of geom2                              (npair x 1)
-    int*      pair_signature;       // (body1+1)<<16 + body2+1                  (npair x 1)
-    mjtNum*   pair_solref;          // constraint solver reference: contact     (npair x mjNREF)
-    mjtNum*   pair_solimp;          // constraint solver impedance: contact     (npair x mjNIMP)
-    mjtNum*   pair_margin;          // detect contact if dist<margin            (npair x 1)
-    mjtNum*   pair_gap;             // include in solver if dist<margin-gap     (npair x 1)
-    mjtNum*   pair_friction;        // tangent1, 2, spin, roll1, 2              (npair x 5)
+    .def_readonly("pair_dim", &mjModel::             // contact dimensionality                   (npair x 1)
+    .def_readonly("pair_geom1", &mjModel::           // id of geom1                              (npair x 1)
+    .def_readonly("pair_geom2", &mjModel::           // id of geom2                              (npair x 1)
+    .def_readonly("pair_signature", &mjModel::       // (body1+1)<<16 + body2+1                  (npair x 1)
+    .def_readonly("pair_solref", &mjModel::          // constraint solver reference: contact     (npair x mjNREF)
+    .def_readonly("pair_solimp", &mjModel::          // constraint solver impedance: contact     (npair x mjNIMP)
+    .def_readonly("pair_margin", &mjModel::          // detect contact if dist<margin            (npair x 1)
+    .def_readonly("pair_gap", &mjModel::             // include in solver if dist<margin-gap     (npair x 1)
+    .def_readonly("pair_friction", &mjModel::        // tangent1, 2, spin, roll1, 2              (npair x 5)
 
     // excluded body pairs for collision detection
-    int*      exclude_signature;    // (body1+1)<<16 + body2+1                  (nexclude x 1)
+    .def_readonly("exclude_signature", &mjModel::    // (body1+1)<<16 + body2+1                  (nexclude x 1)
 
     // equality constraints
-    int*      eq_type;              // constraint type (mjtEq)                  (neq x 1)
-    int*      eq_obj1id;            // id of object 1                           (neq x 1)
-    int*      eq_obj2id;            // id of object 2                           (neq x 1)
-    mjtByte*  eq_active;            // enable/disable constraint                (neq x 1)
-    mjtNum*   eq_solref;            // constraint solver reference              (neq x mjNREF)
-    mjtNum*   eq_solimp;            // constraint solver impedance              (neq x mjNIMP)
-    mjtNum*   eq_data;              // numeric data for constraint              (neq x mjNEQDATA)
+    .def_readonly("eq_type", &mjModel::              // constraint type (mjtEq)                  (neq x 1)
+    .def_readonly("eq_obj1id", &mjModel::            // id of object 1                           (neq x 1)
+    .def_readonly("eq_obj2id", &mjModel::            // id of object 2                           (neq x 1)
+    .def_readonly("eq_active", &mjModel::            // enable/disable constraint                (neq x 1)
+    .def_readonly("eq_solref", &mjModel::            // constraint solver reference              (neq x mjNREF)
+    .def_readonly("eq_solimp", &mjModel::            // constraint solver impedance              (neq x mjNIMP)
+    .def_readonly("eq_data", &mjModel::              // numeric data for constraint              (neq x mjNEQDATA)
 
     // tendons
-    int*      tendon_adr;           // address of first object in tendon's path (ntendon x 1)
-    int*      tendon_num;           // number of objects in tendon's path       (ntendon x 1)
-    int*      tendon_matid;         // material id for rendering                (ntendon x 1)
-    int*      tendon_group;         // group for visibility                     (ntendon x 1)
-    mjtByte*  tendon_limited;       // does tendon have length limits           (ntendon x 1)
-    mjtNum*   tendon_width;         // width for rendering                      (ntendon x 1)
-    mjtNum*   tendon_solref_lim;    // constraint solver reference: limit       (ntendon x mjNREF)
-    mjtNum*   tendon_solimp_lim;    // constraint solver impedance: limit       (ntendon x mjNIMP)
-    mjtNum*   tendon_solref_fri;    // constraint solver reference: friction    (ntendon x mjNREF)
-    mjtNum*   tendon_solimp_fri;    // constraint solver impedance: friction    (ntendon x mjNIMP)
-    mjtNum*   tendon_range;         // tendon length limits                     (ntendon x 2)
-    mjtNum*   tendon_margin;        // min distance for limit detection         (ntendon x 1)
-    mjtNum*   tendon_stiffness;     // stiffness coefficient                    (ntendon x 1)
-    mjtNum*   tendon_damping;       // damping coefficient                      (ntendon x 1)
-    mjtNum*   tendon_frictionloss;  // loss due to friction                     (ntendon x 1)
-    mjtNum*   tendon_lengthspring;  // tendon length in qpos_spring             (ntendon x 1)
-    mjtNum*   tendon_length0;       // tendon length in qpos0                   (ntendon x 1)
-    mjtNum*   tendon_invweight0;    // inv. weight in qpos0                     (ntendon x 1)
-    mjtNum*   tendon_user;          // user data                                (ntendon x nuser_tendon)
-    float*    tendon_rgba;          // rgba when material is omitted            (ntendon x 4)
+    .def_readonly("tendon_adr", &mjModel::           // address of first object in tendon's path (ntendon x 1)
+    .def_readonly("tendon_num", &mjModel::           // number of objects in tendon's path       (ntendon x 1)
+    .def_readonly("tendon_matid", &mjModel::         // material id for rendering                (ntendon x 1)
+    .def_readonly("tendon_group", &mjModel::         // group for visibility                     (ntendon x 1)
+    .def_readonly("tendon_limited", &mjModel::       // does tendon have length limits           (ntendon x 1)
+    .def_readonly("tendon_width", &mjModel::         // width for rendering                      (ntendon x 1)
+    .def_readonly("tendon_solref_lim", &mjModel::    // constraint solver reference: limit       (ntendon x mjNREF)
+    .def_readonly("tendon_solimp_lim", &mjModel::    // constraint solver impedance: limit       (ntendon x mjNIMP)
+    .def_readonly("tendon_solref_fri", &mjModel::    // constraint solver reference: friction    (ntendon x mjNREF)
+    .def_readonly("tendon_solimp_fri", &mjModel::    // constraint solver impedance: friction    (ntendon x mjNIMP)
+    .def_readonly("tendon_range", &mjModel::         // tendon length limits                     (ntendon x 2)
+    .def_readonly("tendon_margin", &mjModel::        // min distance for limit detection         (ntendon x 1)
+    .def_readonly("tendon_stiffness", &mjModel::     // stiffness coefficient                    (ntendon x 1)
+    .def_readonly("tendon_damping", &mjModel::       // damping coefficient                      (ntendon x 1)
+    .def_readonly("tendon_frictionloss", &mjModel::  // loss due to friction                     (ntendon x 1)
+    .def_readonly("tendon_lengthspring", &mjModel::  // tendon length in qpos_spring             (ntendon x 1)
+    .def_readonly("tendon_length0", &mjModel::       // tendon length in qpos0                   (ntendon x 1)
+    .def_readonly("tendon_invweight0", &mjModel::    // inv. weight in qpos0                     (ntendon x 1)
+    .def_readonly("tendon_user", &mjModel::          // user data                                (ntendon x nuser_tendon)
+    .def_readonly("tendon_rgba", &mjModel::          // rgba when material is omitted            (ntendon x 4)
 
     // list of all wrap objects in tendon paths
-    int*      wrap_type;            // wrap object type (mjtWrap)               (nwrap x 1)
-    int*      wrap_objid;           // object id: geom, site, joint             (nwrap x 1)
-    mjtNum*   wrap_prm;             // divisor, joint coef, or site id          (nwrap x 1)
+    .def_readonly("wrap_type", &mjModel::            // wrap object type (mjtWrap)               (nwrap x 1)
+    .def_readonly("wrap_objid", &mjModel::           // object id: geom, site, joint             (nwrap x 1)
+    .def_readonly("wrap_prm", &mjModel::             // divisor, joint coef, or site id          (nwrap x 1)
 
     // actuators
-    int*      actuator_trntype;     // transmission type (mjtTrn)               (nu x 1)
-    int*      actuator_dyntype;     // dynamics type (mjtDyn)                   (nu x 1)
-    int*      actuator_gaintype;    // gain type (mjtGain)                      (nu x 1)
-    int*      actuator_biastype;    // bias type (mjtBias)                      (nu x 1)
-    int*      actuator_trnid;       // transmission id: joint, tendon, site     (nu x 2)
-    int*      actuator_group;       // group for visibility                     (nu x 1)
-    mjtByte*  actuator_ctrllimited; // is control limited                       (nu x 1)
-    mjtByte*  actuator_forcelimited;// is force limited                         (nu x 1)
-    mjtNum*   actuator_dynprm;      // dynamics parameters                      (nu x mjNDYN)
-    mjtNum*   actuator_gainprm;     // gain parameters                          (nu x mjNGAIN)
-    mjtNum*   actuator_biasprm;     // bias parameters                          (nu x mjNBIAS)
-    mjtNum*   actuator_ctrlrange;   // range of controls                        (nu x 2)
-    mjtNum*   actuator_forcerange;  // range of forces                          (nu x 2)
-    mjtNum*   actuator_gear;        // scale length and transmitted force       (nu x 6)
-    mjtNum*   actuator_cranklength; // crank length for slider-crank            (nu x 1)
-    mjtNum*   actuator_acc0;        // acceleration from unit force in qpos0    (nu x 1)
-    mjtNum*   actuator_length0;     // actuator length in qpos0                 (nu x 1)
-    mjtNum*   actuator_lengthrange; // feasible actuator length range           (nu x 2)
-    mjtNum*   actuator_user;        // user data                                (nu x nuser_actuator)
+    .def_readonly("actuator_trntype", &mjModel::     // transmission type (mjtTrn)               (nu x 1)
+    .def_readonly("actuator_dyntype", &mjModel::     // dynamics type (mjtDyn)                   (nu x 1)
+    .def_readonly("actuator_gaintype", &mjModel::    // gain type (mjtGain)                      (nu x 1)
+    .def_readonly("actuator_biastype", &mjModel::    // bias type (mjtBias)                      (nu x 1)
+    .def_readonly("actuator_trnid", &mjModel::       // transmission id: joint, tendon, site     (nu x 2)
+    .def_readonly("actuator_group", &mjModel::       // group for visibility                     (nu x 1)
+    .def_readonly("actuator_ctrllimited", &mjModel:: // is control limited                       (nu x 1)
+    .def_readonly("actuator_forcelimited", &mjModel::// is force limited                         (nu x 1)
+    .def_readonly("actuator_dynprm", &mjModel::      // dynamics parameters                      (nu x mjNDYN)
+    .def_readonly("actuator_gainprm", &mjModel::     // gain parameters                          (nu x mjNGAIN)
+    .def_readonly("actuator_biasprm", &mjModel::     // bias parameters                          (nu x mjNBIAS)
+    .def_readonly("actuator_ctrlrange", &mjModel::   // range of controls                        (nu x 2)
+    .def_readonly("actuator_forcerange", &mjModel::  // range of forces                          (nu x 2)
+    .def_readonly("actuator_gear", &mjModel::        // scale length and transmitted force       (nu x 6)
+    .def_readonly("actuator_cranklength", &mjModel:: // crank length for slider-crank            (nu x 1)
+    .def_readonly("actuator_acc0", &mjModel::        // acceleration from unit force in qpos0    (nu x 1)
+    .def_readonly("actuator_length0", &mjModel::     // actuator length in qpos0                 (nu x 1)
+    .def_readonly("actuator_lengthrange", &mjModel:: // feasible actuator length range           (nu x 2)
+    .def_readonly("actuator_user", &mjModel::        // user data                                (nu x nuser_actuator)
 
     // sensors
-    int*      sensor_type;          // sensor type (mjtSensor)                  (nsensor x 1)
-    int*      sensor_datatype;      // numeric data type (mjtDataType)          (nsensor x 1)
-    int*      sensor_needstage;     // required compute stage (mjtStage)        (nsensor x 1)
-    int*      sensor_objtype;       // type of sensorized object (mjtObj)       (nsensor x 1)
-    int*      sensor_objid;         // id of sensorized object                  (nsensor x 1)
-    int*      sensor_dim;           // number of scalar outputs                 (nsensor x 1)
-    int*      sensor_adr;           // address in sensor array                  (nsensor x 1)
-    mjtNum*   sensor_cutoff;        // cutoff for real and positive; 0: ignore  (nsensor x 1)
-    mjtNum*   sensor_noise;         // noise standard deviation                 (nsensor x 1)
-    mjtNum*   sensor_user;          // user data                                (nsensor x nuser_sensor)
+    .def_readonly("sensor_type", &mjModel::          // sensor type (mjtSensor)                  (nsensor x 1)
+    .def_readonly("sensor_datatype", &mjModel::      // numeric data type (mjtDataType)          (nsensor x 1)
+    .def_readonly("sensor_needstage", &mjModel::     // required compute stage (mjtStage)        (nsensor x 1)
+    .def_readonly("sensor_objtype", &mjModel::       // type of sensorized object (mjtObj)       (nsensor x 1)
+    .def_readonly("sensor_objid", &mjModel::         // id of sensorized object                  (nsensor x 1)
+    .def_readonly("sensor_dim", &mjModel::           // number of scalar outputs                 (nsensor x 1)
+    .def_readonly("sensor_adr", &mjModel::           // address in sensor array                  (nsensor x 1)
+    .def_readonly("sensor_cutoff", &mjModel::        // cutoff for real and positive; 0: ignore  (nsensor x 1)
+    .def_readonly("sensor_noise", &mjModel::         // noise standard deviation                 (nsensor x 1)
+    .def_readonly("sensor_user", &mjModel::          // user data                                (nsensor x nuser_sensor)
 
     // custom numeric fields
-    int*      numeric_adr;          // address of field in numeric_data         (nnumeric x 1)
-    int*      numeric_size;         // size of numeric field                    (nnumeric x 1)
-    mjtNum*   numeric_data;         // array of all numeric fields              (nnumericdata x 1)
+    .def_readonly("numeric_adr", &mjModel::          // address of field in numeric_data         (nnumeric x 1)
+    .def_readonly("numeric_size", &mjModel::         // size of numeric field                    (nnumeric x 1)
+    .def_readonly("numeric_data", &mjModel::         // array of all numeric fields              (nnumericdata x 1)
 
     // custom text fields
-    int*      text_adr;             // address of text in text_data             (ntext x 1)
-    int*      text_size;            // size of text field (strlen+1)            (ntext x 1)
-    char*     text_data;            // array of all text fields (0-terminated)  (ntextdata x 1)
+    .def_readonly("text_adr", &mjModel::             // address of text in text_data             (ntext x 1)
+    .def_readonly("text_size", &mjModel::            // size of text field (strlen+1)            (ntext x 1)
+    .def_readonly("text_data", &mjModel::            // array of all text fields (0-terminated)  (ntextdata x 1)
 
     // custom tuple fields
-    int*      tuple_adr;            // address of text in text_data             (ntuple x 1)
-    int*      tuple_size;           // number of objects in tuple               (ntuple x 1)
-    int*      tuple_objtype;        // array of object types in all tuples      (ntupledata x 1)
-    int*      tuple_objid;          // array of object ids in all tuples        (ntupledata x 1)
-    mjtNum*   tuple_objprm;         // array of object params in all tuples     (ntupledata x 1)
+    .def_readonly("tuple_adr", &mjModel::            // address of text in text_data             (ntuple x 1)
+    .def_readonly("tuple_size", &mjModel::           // number of objects in tuple               (ntuple x 1)
+    .def_readonly("tuple_objtype", &mjModel::        // array of object types in all tuples      (ntupledata x 1)
+    .def_readonly("tuple_objid", &mjModel::          // array of object ids in all tuples        (ntupledata x 1)
+    .def_readonly("tuple_objprm", &mjModel::         // array of object params in all tuples     (ntupledata x 1)
 
     // keyframes
-    mjtNum*   key_time;             // key time                                 (nkey x 1)
-    mjtNum*   key_qpos;             // key position                             (nkey x nq)
-    mjtNum*   key_qvel;             // key velocity                             (nkey x nv)
-    mjtNum*   key_act;              // key activation                           (nkey x na)
-    mjtNum*   key_mpos;             // key mocap position                       (nkey x 3*nmocap)
-    mjtNum*   key_mquat;            // key mocap quaternion                     (nkey x 4*nmocap)
-#endif
+    .def_readonly("key_time", &mjModel::             // key time                                 (nkey x 1)
+    .def_readonly("key_qpos", &mjModel::             // key position                             (nkey x nq)
+    .def_readonly("key_qvel", &mjModel::             // key velocity                             (nkey x nv)
+    .def_readonly("key_act", &mjModel::              // key activation                           (nkey x na)
+    .def_readonly("key_mpos", &mjModel::             // key mocap position                       (nkey x 3*nmocap)
+    .def_readonly("key_mquat", &mjModel::            // key mocap quaternion                     (nkey x 4*nmocap)
+
     // names
     .def_readonly("name_bodyadr", &mjModel::name_bodyadr)         // body name pointers                       (nbody x 1)
     .def_readonly("name_jntadr", &mjModel::name_jntadr)          // joint name pointers                      (njnt x 1)
@@ -408,12 +404,14 @@
     .def_readonly("names", &mjModel::names)                // names of all objects, 0-terminated       (nnames x 1)
 
       ;
-
+#endif
 
 //////////////////////////////////////////////////////////////////////////////////
 
-py::class_<mjData>(m, "mjData")
+//py::class_<mjData>(m, "mjData")
    
+    py::class_<PyMjData>(m, "PyMjData")
+#if 0
 // constant sizes
    .def_readwrite("nstack", &mjData::nstack) // number of mjtNums that can fit in stack
    .def_readwrite("nbuffer", &mjData::nbuffer)  // size of main buffer in bytes
@@ -441,12 +439,14 @@ py::class_<mjData>(m, "mjData")
 //-------------------------------- end of info header
     // buffers
     //void*     buffer;               // main buffer; all pointers point in it    (nbuffer bytes)
-    //mjtNum*   stack;                // stack buffer                             (nstack mjtNums)
+    //.def_readonly("stack;                // stack buffer                             (nstack mjtNums)
 
     //-------------------------------- main inputs and outputs of the computation
-
+#endif
     // state
-    .def_readwrite("qpos", &mjData::qpos) // position                                 (nq x 1)
+    .def_readwrite("qpos", &PyMjData::qpos_) // position                                 (nq x 1)
+
+#if 0
     .def_readwrite("qvel", &mjData::qvel)   // velocity                                 (nv x 1)
     .def_readwrite("act", &mjData::act)   // actuator activation                      (na x 1)
     .def_readwrite("qacc_warmstart", &mjData::qacc_warmstart) // acceleration used for warmstart          (nv x 1)
@@ -598,7 +598,7 @@ py::class_<mjData>(m, "mjData")
     .def_readwrite("cacc", &mjData::cacc)                 // com-based acceleration                   (nbody x 6)
     .def_readwrite("cfrc_int", &mjData::cfrc_int)             // com-based interaction force with parent  (nbody x 6)
     .def_readwrite("cfrc_ext", &mjData::cfrc_ext)             // com-based external force on body         (nbody x 6)
-
+#endif
     ;
 
 
@@ -613,31 +613,43 @@ py::class_<mjData>(m, "mjData")
   //---------------------- Parse and compile ----------------------------------------------
 
 
-  m.def("mj_loadXML", &mj_loadXML2, pybind11::return_value_policy::reference);
-  m.def("mj_loadModel", &mj_loadModel2, pybind11::return_value_policy::reference);
+  m.def("mj_loadXML", &py_mj_loadXML, pybind11::return_value_policy::reference);
+  m.def("mj_loadModel", &py_mj_loadModel, pybind11::return_value_policy::reference);
 
-  m.def("mj_deleteModel", &mj_deleteModel);
+  m.def("mj_deleteModel", &py_mj_deleteModel);
 
-  m.def("mj_saveLastXML", &mj_saveLastXML);
-  m.def("mj_saveModel", &mj_saveModel);
+  //m.def("mj_saveLastXML", &mj_saveLastXML);
+  //m.def("mj_saveModel", &mj_saveModel);
 
   
-  m.def("mj_makeData", &mj_makeData, pybind11::return_value_policy::reference);
-  m.def("mj_deleteData", &mj_deleteData);
+  m.def("mj_makeData", &py_mj_makeData, pybind11::return_value_policy::reference);
+  m.def("mj_deleteData", &py_mj_deleteData);
+
+  m.def("mjv_create_renderer", &py_mjv_create_renderer , pybind11::return_value_policy::reference);
+  m.def("mjv_delete_renderer", &py_mjv_delete_renderer);
+  
+  
+  py::class_<PyMjRenderer>(m, "PyMjRenderer")
+      .def("render", &PyMjRenderer::render)
+      ;
   
 
-  m.def("mj_name2id", &mj_name2id);
-  m.def("mju_copy", &mju_copy);
+  //m.def("mj_name2id", &mj_name2id);
+  //m.def("mju_copy", &mju_copy);
   
   
 
   //---------------------- Main simulation ------------------------------------------------
 
 // Advance simulation, use control callback to obtain external force and control.
- m.def("mj_step", &mj_step);
-// Advance simulation in two steps: before external force and control is set by user.
+ m.def("mj_step", &py_mj_step);
+
+ 
+ // Advance simulation in two steps: before external force and control is set by user.
 
  m.def("mj_step1", &mj_step1);
+
+ #if 0
 
 // Advance simulation in two steps: after external force and control is set by user.
  m.def("mj_step2", &mj_step2);
@@ -658,8 +670,10 @@ m.def("mj_inverseSkip", &mj_inverseSkip);
 
 
 //---------------------- Printing -------------------------------------------------------
-  m.def("mj_printModel", &mj_printModel);
+#endif
+  m.def("mj_printModel", &py_mj_printModel);
   
+#if 0
   // Print data to text file.
    m.def("mj_printData", &mj_printData);
 
@@ -815,7 +829,7 @@ m.def("mj_inverseSkip", &mj_inverseSkip);
 // Compute efc_state, efc_force, qfrc_constraint, and (optionally) cone Hessians.
 // If cost is not NULL, set *cost = s(jar) where jar = Jac*qacc-aref.
     m.def("mj_constraintUpdate", &mj_constraintUpdate);
-
+#endif
 //////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////
