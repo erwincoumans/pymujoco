@@ -98,7 +98,10 @@ CXX_FLAGS += '-DUSE_EIGEN '
 # libraries += [current_python]
 
 libraries = []
-include_dirs = ['python/include', '.','python','third_party/pybind11/include']
+include_dirs = ['python/include', '.',
+                'python',
+                'third_party/pybind11/include',
+                'third_party/glfw/include',]
 
 try:
     import numpy
@@ -113,7 +116,10 @@ else:
         print("numpy_include_dirs = %s" % d)
     include_dirs += NP_DIRS
 
-sources = ["python/pymujoco.cc"]
+sources = ["python/pymujoco.cc", 
+            "python/pymujoco_renderer.cpp",
+            "python/include/uitools.c",
+    ]
 
 
 
@@ -140,7 +146,9 @@ if _platform == "linux" or _platform == "linux2":
 
 elif _platform == "win32":
     print("win32!")
-    libraries = ['User32', 'kernel32', 'mujoco210']
+    libraries = ['User32', 'kernel32', 'mujoco210', 'glfw3static',
+        'Winmm', 'Opengl32', 'glu32', 'Gdi32', 'Comdlg32','Shell32'
+    ]
     CXX_FLAGS += '-DWIN32 '
     CXX_FLAGS += '-DGLEW_STATIC '
     CXX_FLAGS += '/std:c++17 '
