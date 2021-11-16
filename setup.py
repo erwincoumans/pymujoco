@@ -216,7 +216,7 @@ extensions.append(pymujoco_ext)
 
 setup(
     name='pymujoco',
-    version='0.0.1',
+    version='0.0.2',
     description=
     'Python bindings for MuJoCo',
     long_description=
