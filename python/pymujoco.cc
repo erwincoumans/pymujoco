@@ -838,6 +838,57 @@ void py_mj_deleteModel(PyMjModel* m)
 }
 
 
+struct PyMjContact                   // result of collision detection functions
+{
+    // contact parameters set by geom-specific collision detector
+    py::array_t<mjtNum> dist;                    // distance between nearest points; neg: penetration
+    py::array_t<mjtNum> pos;                  // position of contact point: midpoint between geoms
+    py::array_t<mjtNum> frame;                // normal is in [0-2]
+
+    // contact parameters set by mj_collideGeoms
+    py::array_t<mjtNum> includemargin;           // include if dist<includemargin=margin-gap
+    py::array_t<mjtNum> friction;             // tangent1, 2, spin, roll1, 2
+    py::array_t<mjtNum> solref;          // constraint solver reference
+    py::array_t<mjtNum> solimp;          // constraint solver impedance
+
+    // internal storage used by solver
+    py::array_t<mjtNum> mu;                      // friction of regularized cone, set by mj_makeConstraint
+    py::array_t<mjtNum> H;                   // cone Hessian, set by mj_updateConstraint
+
+    // contact descriptors set by mj_collideGeoms
+    py::array_t<int> dim;                        // contact space dimensionality: 1, 3, 4 or 6
+    py::array_t<int> geom1;                      // id of geom 1
+    py::array_t<int> geom2;                      // id of geom 2
+
+    // flag set by mj_fuseContact or mj_instantianteEquality
+    py::array_t<int> exclude;                    // 0: include, 1: in gap, 2: fused, 3: equality, 4: no dofs
+
+    // address computed by mj_instantiateContact
+    py::array_t<int> efc_address;                // address in efc; -1: not included, -2-i: distance constraint i
+    py::capsule buffer_handle;
+
+    PyMjContact(mjContact& ct)
+        :buffer_handle(py::capsule ([](){}))
+    {
+        
+        dist = py::array_t<mjtNum>(size_t(1), &ct.dist, buffer_handle);
+        pos = py::array_t<mjtNum>(size_t(3), ct.pos, buffer_handle);
+        frame = py::array_t<mjtNum>(size_t(9), ct.frame, buffer_handle);
+        includemargin = py::array_t<mjtNum>(size_t(1), &ct.includemargin, buffer_handle);
+        friction = py::array_t<mjtNum>(size_t(9), ct.friction, buffer_handle);
+        solref = py::array_t<mjtNum>(size_t(mjNREF), ct.solref, buffer_handle);
+        solimp = py::array_t<mjtNum>(size_t(mjNIMP), ct.solimp, buffer_handle);
+        mu = py::array_t<mjtNum>(size_t(1), &ct.mu, buffer_handle);
+        H = py::array_t<mjtNum>(size_t(36), ct.H, buffer_handle);
+        dim = py::array_t<int>(size_t(1), &ct.dim, buffer_handle);
+        geom1 = py::array_t<int>(size_t(1), &ct.geom1, buffer_handle);
+        geom2 = py::array_t<int>(size_t(1), &ct.geom2, buffer_handle);
+        exclude = py::array_t<int>(size_t(1), &ct.exclude, buffer_handle);
+        efc_address = py::array_t<int>(size_t(1), &ct.efc_address, buffer_handle);
+    }
+};
+
+
 struct PyMjData 
 {
     mjData* d_;
@@ -908,7 +959,7 @@ struct PyMjData
     py::array_t<mjtNum>   qLDiagSqrtInv;        // 1/sqrt(diag(D))                          (nv x 1)
 
     // computed by mj_fwdPosition/mj_collision
-    py::array_t<mjContact> contact;             // list of all detected contacts            (nconmax x 1)
+    //py::array_t<mjContact> contact;             // list of all detected contacts            (nconmax x 1)
 
 
     py::capsule buffer_handle;
@@ -920,13 +971,13 @@ struct PyMjData
     {
         
         //map constants to numpy arrays too, so they are always up-to-date
-        solver_iter = py::array_t<int>(1, &d_->solver_iter);
-        solver_nnz = py::array_t<int>(1, &d_->solver_nnz);
-        ne = py::array_t<int>(1, &d_->ne);
-        nf = py::array_t<int>(1, &d_->nf);
-        nefc = py::array_t<int>(1, &d_->nefc);
-        ncon = py::array_t<int>(1, &d_->ncon);
-        time_ = py::array_t<mjtNum>(1, &(d_->time));
+        solver_iter = py::array_t<int>(1, &d_->solver_iter, buffer_handle);
+        solver_nnz = py::array_t<int>(1, &d_->solver_nnz, buffer_handle);
+        ne = py::array_t<int>(1, &d_->ne, buffer_handle);
+        nf = py::array_t<int>(1, &d_->nf, buffer_handle);
+        nefc = py::array_t<int>(1, &d_->nefc, buffer_handle);
+        ncon = py::array_t<int>(1, &d_->ncon, buffer_handle);
+        time_ = py::array_t<mjtNum>(1, &(d_->time), buffer_handle);
         
         //c-arrays are mapped to numpy arrays without copy
         qpos =      py::array_t<mjtNum>(m_->nq, d_->qpos,buffer_handle);
@@ -981,14 +1032,24 @@ struct PyMjData
         qLD = py::array_t<mjtNum>(size_t(m_->nM*1), d_->qLD, buffer_handle);
         qLDiagInv = py::array_t<mjtNum>(size_t(m_->nv*1), d_->qLDiagInv, buffer_handle);
         qLDiagSqrtInv = py::array_t<mjtNum>(size_t(m_->nv*1), d_->qLDiagSqrtInv, buffer_handle);
-
-    // computed by mj_fwdPosition/mj_collision
-    //py::array_t<mjContact> contact;             // list of all detected contacts            (nconmax x 1)
-
+    
+        // computed by mj_fwdPosition/mj_collision
+        //contact = py::array_t<mjContact>(size_t(m_->nconmax*1), d_->contact, buffer_handle);
 
     }
 
 
+    PyMjContact get_contact(int index)
+    {
+        if (index<0 || index>=d_->ncon)
+        {
+            printf("ERROR: index for get_contact needs to be in range [0..data.ncon]\n");
+            index=0;
+        }
+        return PyMjContact(d_->contact[index]);
+    }
+    
+    
     void add_elem(float value)
 	{
         d_->qpos[0] += value;
@@ -1000,9 +1061,6 @@ struct PyMjData
         
     }
 };
-
-
-
 
 PyMjData* py_mj_makeData(const PyMjModel* m)
 {

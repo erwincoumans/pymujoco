@@ -359,12 +359,45 @@
 
       ;
 
+
+    //////////////////////////////////////////////////////////////////////////////////
+
+
+    
+     py::class_<PyMjContact>(m, "mjContact")
+      // contact parameters set by geom-specific collision detector
+      .def_readonly("dist", &PyMjContact::dist,                       R"pbdoc( distance between nearest points; neg: penetration)pbdoc")
+      .def_readonly("pos", &PyMjContact::pos,                         R"pbdoc( position of contact point: midpoint between geoms)pbdoc")
+      .def_readonly("frame", &PyMjContact::frame,                     R"pbdoc( normal is in [0-2])pbdoc")
+      // contact parameters set by mj_collideGeoms
+      .def_readonly("includemargin", &PyMjContact::includemargin,     R"pbdoc( include if dist<includemargin margin-gap )pbdoc")
+      .def_readonly("friction", &PyMjContact::friction,               R"pbdoc( tangent1, 2, spin, roll1, 2)pbdoc")
+      .def_readonly("solref", &PyMjContact::solref,                   R"pbdoc( constraint solver reference)pbdoc")
+      .def_readonly("solimp", &PyMjContact::solimp,                   R"pbdoc( constraint solver impedance)pbdoc")
+       // internal storage used by solver
+      .def_readonly("mu", &PyMjContact::mu,                           R"pbdoc( friction of regularized cone, set by mj_makeConstraint)pbdoc")
+      .def_readonly("H", &PyMjContact::H,                             R"pbdoc( cone Hessian, set by mj_updateConstraint)pbdoc")
+      // contact descriptors set by mj_collideGeoms
+      .def_readonly("dim", &PyMjContact::dim,                         R"pbdoc( contact space dimensionality: 1, 3, 4 or 6)pbdoc")
+      .def_readonly("geom1", &PyMjContact::geom1,                     R"pbdoc( id of geom 1)pbdoc")
+      .def_readonly("geom2", &PyMjContact::geom2,                     R"pbdoc( id of geom 2)pbdoc")
+
+      // flag set by mj_fuseContact or mj_instantianteEquality
+      .def_readonly("exclude", &PyMjContact::exclude,                 R"pbdoc( 0: include, 1: in gap, 2: fused, 3: equality, 4: no dofs)pbdoc")
+      
+      // address computed by mj_instantiateContact
+      .def_readonly("efc_address", &PyMjContact::efc_address,         R"pbdoc( address in efc; -1: not included, -2-i: distance constraint i)pbdoc")
+
+;
+
+
 //////////////////////////////////////////////////////////////////////////////////
 
 //py::class_<mjData>(m, "mjData")
    
     py::class_<PyMjData>(m, "PyMjData")
     .def("add_elem", &PyMjData::add_elem)
+    .def("get_contact", &PyMjData::get_contact)
 #if 0
 // constant sizes
    .def_readwrite("nstack", &mjData::nstack) // number of mjtNums that can fit in stack
@@ -428,17 +461,17 @@
         //-------------------------------- POSITION dependent
 
     // computed by mj_fwdPosition/mj_kinematics
-    .def_readwrite("xpos", &PyMjData::xpos)                 // Cartesian position of body frame         (nbody x 3)
-    .def_readwrite("xquat", &PyMjData::xquat)                // Cartesian orientation of body frame      (nbody x 4)
-    .def_readwrite("xmat", &PyMjData::xmat)                 // Cartesian orientation of body frame      (nbody x 9)
-    .def_readwrite("xipos", &PyMjData::xipos)              // Cartesian position of body com           (nbody x 3)
-    .def_readwrite("ximat", &PyMjData::ximat)               // Cartesian orientation of body inertia    (nbody x 9)
-    .def_readwrite("xanchor", &PyMjData::xanchor)              // Cartesian position of joint anchor       (njnt x 3)
-    .def_readwrite("xaxis", &PyMjData::xaxis)                // Cartesian joint axis                     (njnt x 3)
-    .def_readwrite("geom_xpos", &PyMjData::geom_xpos)            // Cartesian geom position                  (ngeom x 3)
-    .def_readwrite("geom_xmat", &PyMjData::geom_xmat)            // Cartesian geom orientation               (ngeom x 9)
-    .def_readwrite("site_xpos", &PyMjData::site_xpos)            // Cartesian site position                  (nsite x 3)
-    .def_readwrite("site_xmat", &PyMjData::site_xmat)            // Cartesian site orientation               (nsite x 9)
+    .def_readwrite("xpos", &PyMjData::xpos,                     R"pbdoc( Cartesian position of body frame         (nbody x 3))pbdoc")
+    .def_readwrite("xquat", &PyMjData::xquat,                     R"pbdoc( Cartesian orientation of body frame      (nbody x 4))pbdoc")
+    .def_readwrite("xmat", &PyMjData::xmat,                     R"pbdoc( Cartesian orientation of body frame      (nbody x 9))pbdoc")
+    .def_readwrite("xipos", &PyMjData::xipos,                     R"pbdoc( Cartesian position of body com           (nbody x 3))pbdoc")
+    .def_readwrite("ximat", &PyMjData::ximat,                     R"pbdoc( Cartesian orientation of body inertia    (nbody x 9))pbdoc")
+    .def_readwrite("xanchor", &PyMjData::xanchor,                     R"pbdoc( Cartesian position of joint anchor       (njnt x 3))pbdoc")
+    .def_readwrite("xaxis", &PyMjData::xaxis,                     R"pbdoc( Cartesian joint axis                     (njnt x 3))pbdoc")
+    .def_readwrite("geom_xpos", &PyMjData::geom_xpos,                     R"pbdoc( Cartesian geom position                  (ngeom x 3))pbdoc")
+    .def_readwrite("geom_xmat", &PyMjData::geom_xmat,                     R"pbdoc( Cartesian geom orientation               (ngeom x 9))pbdoc")
+    .def_readwrite("site_xpos", &PyMjData::site_xpos,                     R"pbdoc( Cartesian site position                  (nsite x 3))pbdoc")
+    .def_readwrite("site_xmat", &PyMjData::site_xmat,                     R"pbdoc( Cartesian site orientation               (nsite x 9))pbdoc")
 #if 0
     .def_readwrite("cam_xpos", &PyMjData::cam_xpos)             // Cartesian camera position                (ncam x 3)
     .def_readwrite("cam_xmat", &PyMjData::cam_xmat)             // Cartesian camera orientation             (ncam x 9)
@@ -447,9 +480,9 @@
 #endif
 
 // computed by mj_fwdPosition/mj_comPos
-    .def_readwrite("subtree_com", &PyMjData::subtree_com)         // center of mass of each subtree           (nbody x 3)
-    .def_readwrite("cdof", &PyMjData::cdof)                 // com-based motion axis of each dof        (nv x 6)
-    .def_readwrite("cinert", &PyMjData::cinert)               // com-based body inertia and mass          (nbody x 10)
+    .def_readwrite("subtree_com", &PyMjData::subtree_com,                     R"pbdoc( center of mass of each subtree           (nbody x 3))pbdoc")
+    .def_readwrite("cdof", &PyMjData::cdof,                     R"pbdoc( com-based motion axis of each dof        (nv x 6))pbdoc")
+    .def_readwrite("cinert", &PyMjData::cinert,                     R"pbdoc( com-based body inertia and mass          (nbody x 10))pbdoc")
 
 #if 0
 
@@ -481,8 +514,9 @@
     .def_readwrite("qLDiagSqrtInv", &PyMjData::qLDiagSqrtInv)        // 1/sqrt(diag(D))                          (nv x 1)
 
     // computed by mj_fwdPosition/mj_collision
-    .def_readwrite("contact", &PyMjData::contact)             // list of all detected contacts            (nconmax x 1)
+    //.def_readwrite("contact", &PyMjData::contact)             // list of all detected contacts            (nconmax x 1)
 
+    
 #if 0
           // computed by mj_fwdPosition/mj_makeConstraint
     .def_readwrite("efc_type", &mjData::efc_type)             // constraint type (mjtConstraint)          (njmax x 1)
@@ -565,32 +599,6 @@
 ////////////////////////////////////////////////////////////////////////////
 
         
-     py::class_<mjContact>(m, "mjContact")
-      // contact parameters set by geom-specific collision detector
-      .def_readonly("dist", &mjContact::dist,                       R"pbdoc( distance between nearest points; neg: penetration)pbdoc")
-      .def_readonly("pos", &mjContact::pos,                         R"pbdoc( position of contact point: midpoint between geoms)pbdoc")
-      .def_readonly("frame", &mjContact::frame,                     R"pbdoc( normal is in [0-2])pbdoc")
-      // contact parameters set by mj_collideGeoms
-      .def_readonly("includemargin", &mjContact::includemargin,     R"pbdoc( include if dist<includemargin margin-gap )pbdoc")
-      .def_readonly("friction", &mjContact::friction,               R"pbdoc( tangent1, 2, spin, roll1, 2)pbdoc")
-      .def_readonly("solref", &mjContact::solref,                   R"pbdoc( constraint solver reference)pbdoc")
-      .def_readonly("solimp", &mjContact::solimp,                   R"pbdoc( constraint solver impedance)pbdoc")
-       // internal storage used by solver
-      .def_readonly("mu", &mjContact::mu,                           R"pbdoc( friction of regularized cone, set by mj_makeConstraint)pbdoc")
-      .def_readonly("H", &mjContact::H,                             R"pbdoc( cone Hessian, set by mj_updateConstraint)pbdoc")
-      // contact descriptors set by mj_collideGeoms
-      .def_readonly("dim", &mjContact::dim,                         R"pbdoc( contact space dimensionality: 1, 3, 4 or 6)pbdoc")
-      .def_readonly("geom1", &mjContact::geom1,                     R"pbdoc( id of geom 1)pbdoc")
-      .def_readonly("geom2", &mjContact::geom2,                     R"pbdoc( id of geom 2)pbdoc")
-
-      // flag set by mj_fuseContact or mj_instantianteEquality
-      .def_readonly("exclude", &mjContact::exclude,                 R"pbdoc( 0: include, 1: in gap, 2: fused, 3: equality, 4: no dofs)pbdoc")
-      
-      // address computed by mj_instantiateContact
-      .def_readonly("efc_address", &mjContact::efc_address,         R"pbdoc( address in efc; -1: not included, -2-i: distance constraint i)pbdoc")
-
-;
-
 //////////////////////////////////////////////////////////////////////////////////
 
 
