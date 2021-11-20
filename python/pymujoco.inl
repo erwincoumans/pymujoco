@@ -156,7 +156,7 @@
     .def_readonly("geom_gap", &PyMjModel::geom_gap,          R"pbdoc( include in solver if dist<margin-gap     (ngeom x 1))pbdoc")
     .def_readonly("geom_user", &PyMjModel::geom_user,          R"pbdoc( user data                                (ngeom x nuser_geom))pbdoc")
     .def_readonly("geom_rgba", &PyMjModel::geom_rgba,          R"pbdoc( rgba when material is omitted            (ngeom x 4))pbdoc")
-#if 0
+
     .def_readonly("site_type", &PyMjModel::site_type,          R"pbdoc( geom type for rendering (mjtGeom)        (nsite x 1))pbdoc")
     .def_readonly("site_bodyid", &PyMjModel::site_bodyid,          R"pbdoc( id of site's body                        (nsite x 1))pbdoc")
     .def_readonly("site_matid", &PyMjModel::site_matid,          R"pbdoc( material id for rendering                (nsite x 1))pbdoc")
@@ -167,6 +167,7 @@
     .def_readonly("site_quat", &PyMjModel::site_quat,          R"pbdoc( local orientation offset rel. to body    (nsite x 4))pbdoc")
     .def_readonly("site_user", &PyMjModel::site_user,          R"pbdoc( user data                                (nsite x nuser_site))pbdoc")
     .def_readonly("site_rgba", &PyMjModel::site_rgba,          R"pbdoc( rgba when material is omitted            (nsite x 4))pbdoc")
+#if 0
     .def_readonly("cam_mode", &PyMjModel::cam_mode,          R"pbdoc( camera tracking mode (mjtCamLight)       (ncam x 1))pbdoc")
     .def_readonly("cam_bodyid", &PyMjModel::cam_bodyid,          R"pbdoc( id of camera's body                      (ncam x 1))pbdoc")
     .def_readonly("cam_targetbodyid", &PyMjModel::cam_targetbodyid,          R"pbdoc( id of targeted body; -1: none            (ncam x 1))pbdoc")
@@ -405,18 +406,16 @@
     .def_readwrite("qpos", &PyMjData::qpos, R"pbdoc( position                                 (nq x 1))pbdoc")
     .def_readwrite("qvel", &PyMjData::qvel,   R"pbdoc( velocity                                 (nv x 1))pbdoc")
 
-#if 0
-    .def_readwrite("act", &mjData::act)   // actuator activation                      (na x 1)
-    .def_readwrite("qacc_warmstart", &mjData::qacc_warmstart) // acceleration used for warmstart          (nv x 1)
+    .def_readwrite("act", &PyMjData::act)   // actuator activation                      (na x 1)
+    .def_readwrite("qacc_warmstart", &PyMjData::qacc_warmstart) // acceleration used for warmstart          (nv x 1)
     // control
-    .def_readwrite("ctrl", &mjData::ctrl)  // control                                  (nu x 1)
-    .def_readwrite("qfrc_applied", &mjData::qfrc_applied)  // applied generalized force                (nv x 1)
-    .def_readwrite("xfrc_applied", &mjData::xfrc_applied)  // applied Cartesian force/torque           (nbody x 6)
-#endif
-    .def_readwrite("qacc", &PyMjData::qacc ,   R"pbdoc( acceleration                             (nv x 1))pbdoc")
+    .def_readwrite("ctrl", &PyMjData::ctrl)  // control                                  (nu x 1)
+    .def_readwrite("qfrc_applied", &PyMjData::qfrc_applied,         R"pbdoc( applied generalized force                (nv x 1))pbdoc")
+    .def_readwrite("xfrc_applied", &PyMjData::xfrc_applied,         R"pbdoc( applied Cartesian force/torque           (nbody x 6))pbdoc")
+    // dynamics
+    .def_readwrite("qacc", &PyMjData::qacc ,                        R"pbdoc( acceleration                             (nv x 1))pbdoc")
+    .def_readwrite("act_dot", &PyMjData::act_dot,                     R"pbdoc( time-derivative of actuator activation   (na x 1))pbdoc")
 #if 0
-        .def_readwrite("act_dot", &mjData::act_dot)                 // time-derivative of actuator activation   (na x 1)
-
 // mocap data
     .def_readwrite("mocap_pos", &mjData::mocap_pos)// positions of mocap bodies                (nmocap x 3)
     .def_readwrite("mocap_quat", &mjData::mocap_quat)// orientations of mocap bodies             (nmocap x 4)
@@ -425,32 +424,34 @@
 
       // sensors
     .def_readwrite("sensordata", &mjData::sensordata) // sensor data array                        (nsensordata x 1)
-
+#endif
         //-------------------------------- POSITION dependent
 
     // computed by mj_fwdPosition/mj_kinematics
-    .def_readwrite("xpos", &mjData::xpos)                 // Cartesian position of body frame         (nbody x 3)
-    .def_readwrite("xquat", &mjData::xquat)                // Cartesian orientation of body frame      (nbody x 4)
-    .def_readwrite("xmat", &mjData::xmat)                 // Cartesian orientation of body frame      (nbody x 9)
-    .def_readwrite("xipos", &mjData::xipos)              // Cartesian position of body com           (nbody x 3)
-    .def_readwrite("ximat", &mjData::ximat)               // Cartesian orientation of body inertia    (nbody x 9)
-    .def_readwrite("xanchor", &mjData::xanchor)              // Cartesian position of joint anchor       (njnt x 3)
-    .def_readwrite("xaxis", &mjData::xaxis)                // Cartesian joint axis                     (njnt x 3)
-    .def_readwrite("geom_xpos", &mjData::geom_xpos)            // Cartesian geom position                  (ngeom x 3)
-    .def_readwrite("geom_xmat", &mjData::geom_xmat)            // Cartesian geom orientation               (ngeom x 9)
-    .def_readwrite("site_xpos", &mjData::site_xpos)            // Cartesian site position                  (nsite x 3)
-    .def_readwrite("site_xmat", &mjData::site_xmat)            // Cartesian site orientation               (nsite x 9)
-    .def_readwrite("cam_xpos", &mjData::cam_xpos)             // Cartesian camera position                (ncam x 3)
-    .def_readwrite("cam_xmat", &mjData::cam_xmat)             // Cartesian camera orientation             (ncam x 9)
-    .def_readwrite("light_xpos", &mjData::light_xpos)           // Cartesian light position                 (nlight x 3)
-    .def_readwrite("light_xdir", &mjData::light_xdir)           // Cartesian light direction                (nlight x 3)
+    .def_readwrite("xpos", &PyMjData::xpos)                 // Cartesian position of body frame         (nbody x 3)
+    .def_readwrite("xquat", &PyMjData::xquat)                // Cartesian orientation of body frame      (nbody x 4)
+    .def_readwrite("xmat", &PyMjData::xmat)                 // Cartesian orientation of body frame      (nbody x 9)
+    .def_readwrite("xipos", &PyMjData::xipos)              // Cartesian position of body com           (nbody x 3)
+    .def_readwrite("ximat", &PyMjData::ximat)               // Cartesian orientation of body inertia    (nbody x 9)
+    .def_readwrite("xanchor", &PyMjData::xanchor)              // Cartesian position of joint anchor       (njnt x 3)
+    .def_readwrite("xaxis", &PyMjData::xaxis)                // Cartesian joint axis                     (njnt x 3)
+    .def_readwrite("geom_xpos", &PyMjData::geom_xpos)            // Cartesian geom position                  (ngeom x 3)
+    .def_readwrite("geom_xmat", &PyMjData::geom_xmat)            // Cartesian geom orientation               (ngeom x 9)
+    .def_readwrite("site_xpos", &PyMjData::site_xpos)            // Cartesian site position                  (nsite x 3)
+    .def_readwrite("site_xmat", &PyMjData::site_xmat)            // Cartesian site orientation               (nsite x 9)
+#if 0
+    .def_readwrite("cam_xpos", &PyMjData::cam_xpos)             // Cartesian camera position                (ncam x 3)
+    .def_readwrite("cam_xmat", &PyMjData::cam_xmat)             // Cartesian camera orientation             (ncam x 9)
+    .def_readwrite("light_xpos", &PyMjData::light_xpos)           // Cartesian light position                 (nlight x 3)
+    .def_readwrite("light_xdir", &PyMjData::light_xdir)           // Cartesian light direction                (nlight x 3)
+#endif
 
 // computed by mj_fwdPosition/mj_comPos
-    .def_readwrite("subtree_com", &mjData::subtree_com)         // center of mass of each subtree           (nbody x 3)
-    .def_readwrite("cdof", &mjData::cdof)                 // com-based motion axis of each dof        (nv x 6)
-    .def_readwrite("cinert", &mjData::cinert)               // com-based body inertia and mass          (nbody x 10)
+    .def_readwrite("subtree_com", &PyMjData::subtree_com)         // center of mass of each subtree           (nbody x 3)
+    .def_readwrite("cdof", &PyMjData::cdof)                 // com-based motion axis of each dof        (nv x 6)
+    .def_readwrite("cinert", &PyMjData::cinert)               // com-based body inertia and mass          (nbody x 10)
 
-    
+#if 0
 
     // computed by mj_fwdPosition/mj_tendon
     .def_readwrite("ten_wrapadr", &mjData::ten_wrapadr)          // start address of tendon's path           (ntendon x 1)
@@ -463,25 +464,26 @@
     .def_readwrite("wrap_obj", &mjData::wrap_obj)             // geom id; -1: site; -2: pulley            (nwrap*2 x 1)
     .def_readwrite("wrap_xpos", &mjData::wrap_xpos)            // Cartesian 3D points in all path          (nwrap*2 x 3)
 
-    
+#endif
     // computed by mj_fwdPosition/mj_transmission
-    .def_readwrite("actuator_length", &mjData::actuator_length)      // actuator lengths                         (nu x 1)
-    .def_readwrite("actuator_moment", &mjData::actuator_moment)      // actuator moments                         (nu x nv)
+    .def_readwrite("actuator_length", &PyMjData::actuator_length)      // actuator lengths                         (nu x 1)
+    .def_readwrite("actuator_moment", &PyMjData::actuator_moment)      // actuator moments                         (nu x nv)
 
-    
+
 
     // computed by mj_fwdPosition/mj_crb
-    .def_readwrite("crb", &mjData::crb)                  // com-based composite inertia and mass     (nbody x 10)
-    .def_readwrite("qM", &mjData::qM)                  // total inertia                            (nM x 1)
+    .def_readwrite("crb", &PyMjData::crb)                  // com-based composite inertia and mass     (nbody x 10)
+    .def_readwrite("qM", &PyMjData::qM)                  // total inertia                            (nM x 1)
 
     // computed by mj_fwdPosition/mj_factorM
-    .def_readwrite("qLD", &mjData::qLD)                  // L'*D*L factorization of M                (nM x 1)
-    .def_readwrite("qLDiagInv", &mjData::qLDiagInv)            // 1/diag(D)                                (nv x 1)
-    .def_readwrite("qLDiagSqrtInv", &mjData::qLDiagSqrtInv)        // 1/sqrt(diag(D))                          (nv x 1)
+    .def_readwrite("qLD", &PyMjData::qLD)                  // L'*D*L factorization of M                (nM x 1)
+    .def_readwrite("qLDiagInv", &PyMjData::qLDiagInv)            // 1/diag(D)                                (nv x 1)
+    .def_readwrite("qLDiagSqrtInv", &PyMjData::qLDiagSqrtInv)        // 1/sqrt(diag(D))                          (nv x 1)
 
     // computed by mj_fwdPosition/mj_collision
-    .def_readwrite("contact", &mjData::contact)             // list of all detected contacts            (nconmax x 1)
+    .def_readwrite("contact", &PyMjData::contact)             // list of all detected contacts            (nconmax x 1)
 
+#if 0
           // computed by mj_fwdPosition/mj_makeConstraint
     .def_readwrite("efc_type", &mjData::efc_type)             // constraint type (mjtConstraint)          (njmax x 1)
     .def_readwrite("efc_id", &mjData::efc_id)               // id of object of specified type           (njmax x 1)
@@ -560,8 +562,34 @@
 #endif
     ;
 
+////////////////////////////////////////////////////////////////////////////
 
+        
+     py::class_<mjContact>(m, "mjContact")
+      // contact parameters set by geom-specific collision detector
+      .def_readonly("dist", &mjContact::dist,                       R"pbdoc( distance between nearest points; neg: penetration)pbdoc")
+      .def_readonly("pos", &mjContact::pos,                         R"pbdoc( position of contact point: midpoint between geoms)pbdoc")
+      .def_readonly("frame", &mjContact::frame,                     R"pbdoc( normal is in [0-2])pbdoc")
+      // contact parameters set by mj_collideGeoms
+      .def_readonly("includemargin", &mjContact::includemargin,     R"pbdoc( include if dist<includemargin margin-gap )pbdoc")
+      .def_readonly("friction", &mjContact::friction,               R"pbdoc( tangent1, 2, spin, roll1, 2)pbdoc")
+      .def_readonly("solref", &mjContact::solref,                   R"pbdoc( constraint solver reference)pbdoc")
+      .def_readonly("solimp", &mjContact::solimp,                   R"pbdoc( constraint solver impedance)pbdoc")
+       // internal storage used by solver
+      .def_readonly("mu", &mjContact::mu,                           R"pbdoc( friction of regularized cone, set by mj_makeConstraint)pbdoc")
+      .def_readonly("H", &mjContact::H,                             R"pbdoc( cone Hessian, set by mj_updateConstraint)pbdoc")
+      // contact descriptors set by mj_collideGeoms
+      .def_readonly("dim", &mjContact::dim,                         R"pbdoc( contact space dimensionality: 1, 3, 4 or 6)pbdoc")
+      .def_readonly("geom1", &mjContact::geom1,                     R"pbdoc( id of geom 1)pbdoc")
+      .def_readonly("geom2", &mjContact::geom2,                     R"pbdoc( id of geom 2)pbdoc")
 
+      // flag set by mj_fuseContact or mj_instantianteEquality
+      .def_readonly("exclude", &mjContact::exclude,                 R"pbdoc( 0: include, 1: in gap, 2: fused, 3: equality, 4: no dofs)pbdoc")
+      
+      // address computed by mj_instantiateContact
+      .def_readonly("efc_address", &mjContact::efc_address,         R"pbdoc( address in efc; -1: not included, -2-i: distance constraint i)pbdoc")
+
+;
 
 //////////////////////////////////////////////////////////////////////////////////
 
@@ -601,75 +629,78 @@
   //---------------------- Main simulation ------------------------------------------------
 
 // Advance simulation, use control callback to obtain external force and control.
- m.def("mj_step", &py_mj_step);
+ m.def("mj_step", &py_mj_step, R"pbdoc( Advance simulation, use control callback to obtain external force and control.)pbdoc");
 
  
  // Advance simulation in two steps: before external force and control is set by user.
 
- m.def("mj_step1", &mj_step1);
+ m.def("mj_step1", &py_mj_step1, R"pbdoc( Advance simulation in two steps: before external force and control is set by user.)pbdoc");
 
- #if 0
+ 
 
 // Advance simulation in two steps: after external force and control is set by user.
- m.def("mj_step2", &mj_step2);
+ m.def("mj_step2", &py_mj_step2, R"pbdoc( Advance simulation in two steps: after external force and control is set by user.)pbdoc");
+ 
 
 // Forward dynamics: same as mj_step but do not integrate in time.
-  m.def("mj_forward", &mj_forward);
+  m.def("mj_forward", &py_mj_forward, R"pbdoc( Forward dynamics: same as mj_step but do not integrate in time.)pbdoc");
 
+  
 
 // Inverse dynamics: qacc must be set before calling.
-   m.def("mj_inverse", &mj_inverse);
+   m.def("mj_inverse", &py_mj_inverse, R"pbdoc(  Inverse dynamics: qacc must be set before calling.)pbdoc");
 
-
+   
 // Forward dynamics with skip; skipstage is mjtStage.
-   m.def("mj_forwardSkip", &mj_forwardSkip);
+   m.def("mj_forwardSkip", &py_mj_forwardSkip, R"pbdoc(  Forward dynamics with skip; skipstage is mjtStage.)pbdoc");
 
 // Inverse dynamics with skip; skipstage is mjtStage.
-m.def("mj_inverseSkip", &mj_inverseSkip);
+   m.def("mj_inverseSkip", &py_mj_inverseSkip, R"pbdoc(  Inverse dynamics with skip; skipstage is mjtStage.)pbdoc");
 
 
 //---------------------- Printing -------------------------------------------------------
-#endif
-  m.def("mj_printModel", &py_mj_printModel);
+
+  m.def("mj_printModel", &py_mj_printModel, R"pbdoc(  print Model to file.)pbdoc");
   
-#if 0
+  
   // Print data to text file.
-   m.def("mj_printData", &mj_printData);
+   m.def("mj_printData", &py_mj_printData, R"pbdoc(  print Data to file.)pbdoc");
 
-
+   #if 0  
 // Print matrix to screen.
-   m.def("mju_printMat", &mju_printMat);
+   m.def("mju_printMat", &py_mju_printMat);
 
 
 // Print sparse matrix to screen.
-      m.def("mju_printMatSparse", &mju_printMatSparse);
-  
-  
+      m.def("mju_printMatSparse", &py_mju_printMatSparse);
+#endif
+
 
       
 //---------------------- Components -----------------------------------------------------
 
 // Run position-dependent computations.
-  m.def("mj_fwdPosition", &mj_fwdPosition);
+  m.def("mj_fwdPosition", &py_mj_fwdPosition, R"pbdoc( Run position-dependent computations.)pbdoc");
 
 
 // Run velocity-dependent computations.
-    m.def("mj_fwdVelocity", &mj_fwdVelocity);
+    m.def("mj_fwdVelocity", &py_mj_fwdVelocity, R"pbdoc( Run velocity-dependent computations.)pbdoc");
 
 
 // Compute actuator force qfrc_actuation.
- m.def("mj_fwdActuation", &mj_fwdActuation);
+ m.def("mj_fwdActuation", &py_mj_fwdActuation, R"pbdoc( Compute actuator force qfrc_actuation.)pbdoc");
 
 // Add up all non-constraint forces, compute qacc_unc.
- m.def("mj_fwdAcceleration", &mj_fwdAcceleration);
+ m.def("mj_fwdAcceleration", &py_mj_fwdAcceleration, R"pbdoc( Add up all non-constraint forces, compute qacc_unc.)pbdoc");
 
 
 // Run selected constraint solver.
-  m.def("mj_fwdConstraint", &mj_fwdConstraint);
+  m.def("mj_fwdConstraint", &py_mj_fwdConstraint, R"pbdoc( Run selected constraint solver.)pbdoc");
 
 // Euler integrator, semi-implicit in velocity.
-  m.def("mj_Euler", &mj_Euler);
-
+  m.def("mj_Euler", &py_mj_Euler, R"pbdoc(  Euler integrator, semi-implicit in velocity.)pbdoc");
+  
+#if 0
 
 // Runge-Kutta explicit order-N integrator.
   m.def("mj_RungeKutta", &mj_RungeKutta);
@@ -715,23 +746,25 @@ m.def("mj_inverseSkip", &mj_inverseSkip);
 // Evaluate velocity-dependent energy (kinetic).
   m.def("mj_energyVel", &mj_energyVel);
 
-
+#endif
 // Check qpos, reset if any element is too big or nan.
-    m.def("mj_checkPos", &mj_checkPos);
+    m.def("mj_checkPos", &py_mj_checkPos, R"pbdoc(  Check qpos, reset if any element is too big or nan.)pbdoc");
 
 
 // Check qvel, reset if any element is too big or nan.
-  m.def("mj_checkVel", &mj_checkVel);
+  m.def("mj_checkVel", &py_mj_checkVel, R"pbdoc(  Check qvel, reset if any element is too big or nan.)pbdoc");
 
 // Check qacc, reset if any element is too big or nan.
-  m.def("mj_checkAcc", &mj_checkAcc);
+  m.def("mj_checkAcc", &py_mj_checkAcc, R"pbdoc(  Check qacc, reset if any element is too big or nan.)pbdoc");
 
 
 // Run forward kinematics.
-    m.def("mj_kinematics", &mj_kinematics);
+    m.def("mj_kinematics", &py_mj_kinematics, R"pbdoc( Run forward kinematics.)pbdoc");
 
 // Map inertias and motion dofs to global frame centered at CoM.
-   m.def("mj_comPos", &mj_comPos);
+   m.def("mj_comPos", &py_mj_comPos, R"pbdoc(  Map inertias and motion dofs to global frame centered at CoM.)pbdoc");
+
+#if 0
 
 // Compute camera and light positions and orientations.
       m.def("mj_camlight", &mj_camlight);
@@ -771,10 +804,11 @@ m.def("mj_inverseSkip", &mj_inverseSkip);
 // RNE with complete data: compute cacc, cfrc_ext, cfrc_int.
     m.def("mj_rnePostConstraint", &mj_rnePostConstraint);
 
-
+#endif
 // Run collision detection.
-    m.def("mj_collision", &mj_collision);
+    m.def("mj_collision", &py_mj_collision, R"pbdoc(  Run collision detection.)pbdoc");
 
+#if 0
 // Construct constraints.
     m.def("mj_makeConstraint", &mj_makeConstraint);
 

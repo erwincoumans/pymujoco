@@ -192,7 +192,7 @@ struct PyMjModel
     py::array_t<mjtNum>   geom_user;            // user data                                (ngeom x nuser_geom)
     py::array_t<float>    geom_rgba;            // rgba when material is omitted            (ngeom x 4)
 
-#if 0
+
     // sites
     py::array_t<int>      site_type;            // geom type for rendering (mjtGeom)        (nsite x 1)
     py::array_t<int>      site_bodyid;          // id of site's body                        (nsite x 1)
@@ -205,6 +205,7 @@ struct PyMjModel
     py::array_t<mjtNum>   site_user;            // user data                                (nsite x nuser_site)
     py::array_t<float>    site_rgba;            // rgba when material is omitted            (nsite x 4)
 
+#if 0
     // cameras
     py::array_t<int>      cam_mode;             // camera tracking mode (mjtCamLight)       (ncam x 1)
     py::array_t<int>      cam_bodyid;           // id of camera's body                      (ncam x 1)
@@ -578,22 +579,19 @@ struct PyMjModel
          geom_gap = py::array_t<mjtNum>(size_t(m_->ngeom*1), m_->geom_gap, buffer_handle);
          geom_user = py::array_t<mjtNum>(size_t(m_->ngeom*m_->nuser_geom), m_->geom_user, buffer_handle);
          geom_rgba = py::array_t<float>(size_t(m_->ngeom*4), m_->geom_rgba, buffer_handle);
-
+// sites
+         site_type = py::array_t<int>(size_t(m_->nsite*1), m_->site_type, buffer_handle);
+         site_bodyid = py::array_t<int>(size_t(m_->nsite*1), m_->site_bodyid, buffer_handle);
+         site_matid = py::array_t<int>(size_t(m_->nsite*1), m_->site_matid, buffer_handle);
+         site_group = py::array_t<int>(size_t(m_->nsite*1), m_->site_group, buffer_handle);
+         site_sameframe = py::array_t<mjtByte>(size_t(m_->nsite*1), m_->site_sameframe, buffer_handle);
+         site_size = py::array_t<mjtNum>(size_t(m_->nsite*3), m_->site_size, buffer_handle);
+         site_pos = py::array_t<mjtNum>(size_t(m_->nsite*3), m_->site_pos, buffer_handle);
+         site_quat = py::array_t<mjtNum>(size_t(m_->nsite*4), m_->site_quat, buffer_handle);
+         site_user = py::array_t<mjtNum>(size_t(m_->nsite*nuser_site), m_->site_user, buffer_handle);
+         site_rgba = py::array_t<float>(size_t(m_->nsite*4), m_->site_rgba, buffer_handle);
 
 #if 0
-
-    // sites
-    py::array_t<int>      site_type;            // geom type for rendering (mjtGeom)        (nsite x 1)
-    py::array_t<int>      site_bodyid;          // id of site's body                        (nsite x 1)
-    py::array_t<int>      site_matid;           // material id for rendering                (nsite x 1)
-    py::array_t<int>      site_group;           // group for visibility                     (nsite x 1)
-    py::array_t<mjtByte>  site_sameframe;       // same as body frame (1) or iframe (2)     (nsite x 1)
-    py::array_t<mjtNum>   site_size;            // geom size for rendering                  (nsite x 3)
-    py::array_t<mjtNum>   site_pos;             // local position offset rel. to body       (nsite x 3)
-    py::array_t<mjtNum>   site_quat;            // local orientation offset rel. to body    (nsite x 4)
-    py::array_t<mjtNum>   site_user;            // user data                                (nsite x nuser_site)
-    py::array_t<float>    site_rgba;            // rgba when material is omitted            (nsite x 4)
-
     // cameras
     py::array_t<int>      cam_mode;             // camera tracking mode (mjtCamLight)       (ncam x 1)
     py::array_t<int>      cam_bodyid;           // id of camera's body                      (ncam x 1)
@@ -857,11 +855,62 @@ struct PyMjData
 
     // global properties
     py::array_t<mjtNum> time_;                    // simulation time
+     
+// state
+    py::array_t<mjtNum> qpos;                 // position                                 (nq x 1)
+    py::array_t<mjtNum> qvel;                 // velocity                                 (nv x 1)
+    py::array_t<mjtNum> act;                  // actuator activation                      (na x 1)
+    py::array_t<mjtNum> qacc_warmstart;       // acceleration used for warmstart          (nv x 1)
 
-    py::array_t<mjtNum> qpos;       
-    py::array_t<mjtNum> qvel;
-    py::array_t<mjtNum> qacc;
-    
+    // control
+    py::array_t<mjtNum> ctrl;                 // control                                  (nu x 1)
+    py::array_t<mjtNum> qfrc_applied;         // applied generalized force                (nv x 1)
+    py::array_t<mjtNum> xfrc_applied;         // applied Cartesian force/torque           (nbody x 6)
+
+// dynamics
+    py::array_t<mjtNum> qacc;                 // acceleration                             (nv x 1)
+    py::array_t<mjtNum> act_dot;              // time-derivative of actuator activation   (na x 1)
+
+
+    // computed by mj_fwdPosition/mj_kinematics
+    py::array_t<mjtNum>   xpos;                 // Cartesian position of body frame         (nbody x 3)
+    py::array_t<mjtNum>   xquat;                // Cartesian orientation of body frame      (nbody x 4)
+    py::array_t<mjtNum>   xmat;                 // Cartesian orientation of body frame      (nbody x 9)
+    py::array_t<mjtNum>   xipos;                // Cartesian position of body com           (nbody x 3)
+    py::array_t<mjtNum>   ximat;                // Cartesian orientation of body inertia    (nbody x 9)
+    py::array_t<mjtNum>   xanchor;              // Cartesian position of joint anchor       (njnt x 3)
+    py::array_t<mjtNum>   xaxis;                // Cartesian joint axis                     (njnt x 3)
+    py::array_t<mjtNum>   geom_xpos;            // Cartesian geom position                  (ngeom x 3)
+    py::array_t<mjtNum>   geom_xmat;            // Cartesian geom orientation               (ngeom x 9)
+    py::array_t<mjtNum>   site_xpos;            // Cartesian site position                  (nsite x 3)
+    py::array_t<mjtNum>   site_xmat;            // Cartesian site orientation               (nsite x 9)
+    py::array_t<mjtNum>   cam_xpos;             // Cartesian camera position                (ncam x 3)
+    py::array_t<mjtNum>   cam_xmat;             // Cartesian camera orientation             (ncam x 9)
+    py::array_t<mjtNum>   light_xpos;           // Cartesian light position                 (nlight x 3)
+    py::array_t<mjtNum>   light_xdir;           // Cartesian light direction                (nlight x 3)
+
+    // computed by mj_fwdPosition/mj_comPos
+    py::array_t<mjtNum>   subtree_com;          // center of mass of each subtree           (nbody x 3)
+    py::array_t<mjtNum>   cdof;                 // com-based motion axis of each dof        (nv x 6)
+    py::array_t<mjtNum>   cinert;               // com-based body inertia and mass          (nbody x 10)
+
+       // computed by mj_fwdPosition/mj_transmission
+    py::array_t<mjtNum>   actuator_length;      // actuator lengths                         (nu x 1)
+    py::array_t<mjtNum>   actuator_moment;      // actuator moments                         (nu x nv)
+
+     // computed by mj_fwdPosition/mj_crb
+    py::array_t<mjtNum>   crb;                  // com-based composite inertia and mass     (nbody x 10)
+    py::array_t<mjtNum>   qM;                   // total inertia                            (nM x 1)
+
+    // computed by mj_fwdPosition/mj_factorM
+    py::array_t<mjtNum>   qLD;                  // L'*D*L factorization of M                (nM x 1)
+    py::array_t<mjtNum>   qLDiagInv;            // 1/diag(D)                                (nv x 1)
+    py::array_t<mjtNum>   qLDiagSqrtInv;        // 1/sqrt(diag(D))                          (nv x 1)
+
+    // computed by mj_fwdPosition/mj_collision
+    py::array_t<mjContact> contact;             // list of all detected contacts            (nconmax x 1)
+
+
     py::capsule buffer_handle;
 
     PyMjData (mjData* d, const mjModel* m)
@@ -881,10 +930,62 @@ struct PyMjData
         
         //c-arrays are mapped to numpy arrays without copy
         qpos =      py::array_t<mjtNum>(m_->nq, d_->qpos,buffer_handle);
-
         qvel = py::array_t<mjtNum>(size_t(m_->nv), d_->qvel, buffer_handle);
-        qacc = py::array_t<mjtNum>(size_t(m_->nv), d_->qacc, buffer_handle);
+        act =  py::array_t<mjtNum>(m_->na, d_->act,buffer_handle);
+        qacc_warmstart =  py::array_t<mjtNum>(m_->nv, d_->qacc_warmstart,buffer_handle);
+    
+        // control
+        ctrl =  py::array_t<mjtNum>(m_->nu, d_->ctrl,buffer_handle);
+        qfrc_applied =  py::array_t<mjtNum>(m_->nv, d_->qfrc_applied,buffer_handle);
+        xfrc_applied =  py::array_t<mjtNum>(m_->nbody*6, d_->xfrc_applied,buffer_handle);
         
+        // dynamics
+        qacc = py::array_t<mjtNum>(size_t(m_->nv), d_->qacc, buffer_handle);
+        act_dot = py::array_t<mjtNum>(size_t(m_->na), d_->act_dot, buffer_handle);
+        
+        // computed by mj_fwdPosition/mj_kinematics
+
+        xpos = py::array_t<mjtNum>(size_t(m_->nbody*3), d_->xpos, buffer_handle);
+        xquat = py::array_t<mjtNum>(size_t(m_->nbody*4), d_->xquat, buffer_handle);
+        xmat = py::array_t<mjtNum>(size_t(m_->nbody*9), d_->xmat, buffer_handle);
+        xipos = py::array_t<mjtNum>(size_t(m_->nbody*3), d_->xipos, buffer_handle);
+        ximat = py::array_t<mjtNum>(size_t(m_->nbody*9), d_->ximat, buffer_handle);
+        xanchor = py::array_t<mjtNum>(size_t(m_->njnt*3), d_->xanchor, buffer_handle);
+        xaxis = py::array_t<mjtNum>(size_t(m_->njnt*3), d_->xaxis, buffer_handle);
+        geom_xpos = py::array_t<mjtNum>(size_t(m_->ngeom*3), d_->geom_xpos, buffer_handle);
+        geom_xmat = py::array_t<mjtNum>(size_t(m_->ngeom*9), d_->geom_xmat, buffer_handle);
+        site_xpos = py::array_t<mjtNum>(size_t(m_->nsite*3), d_->site_xpos, buffer_handle);
+        site_xmat = py::array_t<mjtNum>(size_t(m_->nsite*9), d_->site_xmat, buffer_handle);
+
+#if 0
+    py::array_t<mjtNum>   cam_xpos;             // Cartesian camera position                (ncam x 3)
+    py::array_t<mjtNum>   cam_xmat;             // Cartesian camera orientation             (ncam x 9)
+    py::array_t<mjtNum>   light_xpos;           // Cartesian light position                 (nlight x 3)
+    py::array_t<mjtNum>   light_xdir;           // Cartesian light direction                (nlight x 3)
+#endif
+
+        // computed by mj_fwdPosition/mj_comPos
+        subtree_com = py::array_t<mjtNum>(size_t(m_->nbody*3), d_->subtree_com, buffer_handle);
+        cdof = py::array_t<mjtNum>(size_t(m_->nv*6), d_->cdof, buffer_handle);
+        cinert = py::array_t<mjtNum>(size_t(m_->nbody*10), d_->cinert, buffer_handle);
+
+        // computed by mj_fwdPosition/mj_transmission
+        actuator_length = py::array_t<mjtNum>(size_t(m_->nu*1), d_->actuator_length, buffer_handle);
+        actuator_moment = py::array_t<mjtNum>(size_t(m_->nu*m_->nv), d_->actuator_moment, buffer_handle);
+        
+     // computed by mj_fwdPosition/mj_crb
+        crb = py::array_t<mjtNum>(size_t(m_->nbody*10), d_->crb, buffer_handle);
+        qM = py::array_t<mjtNum>(size_t(m_->nM*1), d_->qM, buffer_handle);
+    
+    // computed by mj_fwdPosition/mj_factorM
+        qLD = py::array_t<mjtNum>(size_t(m_->nM*1), d_->qLD, buffer_handle);
+        qLDiagInv = py::array_t<mjtNum>(size_t(m_->nv*1), d_->qLDiagInv, buffer_handle);
+        qLDiagSqrtInv = py::array_t<mjtNum>(size_t(m_->nv*1), d_->qLDiagSqrtInv, buffer_handle);
+
+    // computed by mj_fwdPosition/mj_collision
+    //py::array_t<mjContact> contact;             // list of all detected contacts            (nconmax x 1)
+
+
     }
 
 
@@ -899,6 +1000,9 @@ struct PyMjData
         
     }
 };
+
+
+
 
 PyMjData* py_mj_makeData(const PyMjModel* m)
 {
@@ -944,6 +1048,102 @@ void py_mj_step(const PyMjModel* m, PyMjData* d)
 void py_mj_step1(const PyMjModel* m, PyMjData* d)
 {
     mj_step1(m->m_, d->d_);
+}
+
+// advance simulation in two phases: before input is set by user
+void py_mj_step2(const PyMjModel* m, PyMjData* d)
+{
+    mj_step2(m->m_, d->d_);
+}
+
+// advance simulation in two phases: before input is set by user
+void py_mj_forward(const PyMjModel* m, PyMjData* d)
+{
+    mj_forward(m->m_, d->d_);
+}
+
+void py_mj_inverse(const PyMjModel* m, PyMjData* d)
+{
+    mj_inverse(m->m_, d->d_);
+}
+
+void py_mj_forwardSkip(const PyMjModel* m, PyMjData* d, int skipstage, int skipsensor)
+{
+    mj_forwardSkip(m->m_, d->d_, skipstage, skipsensor);
+}
+
+void py_mj_inverseSkip(const PyMjModel* m, PyMjData* d, int skipstage, int skipsensor)
+{
+    mj_inverseSkip(m->m_, d->d_, skipstage, skipsensor);
+}
+
+void py_mj_printData(const PyMjModel* m, PyMjData* d, const char* filename)
+{
+    mj_printData(m->m_, d->d_, filename);
+}
+  
+
+void py_mj_fwdPosition(const PyMjModel* m, PyMjData* d)
+{
+    mj_fwdPosition(m->m_, d->d_);
+}
+
+void py_mj_fwdVelocity(const PyMjModel* m, PyMjData* d)
+{
+    mj_fwdVelocity(m->m_, d->d_);
+}
+
+void py_mj_fwdActuation(const PyMjModel* m, PyMjData* d)
+{
+    mj_fwdActuation(m->m_, d->d_);
+}
+
+void py_mj_fwdAcceleration(const PyMjModel* m, PyMjData* d)
+{
+    mj_fwdAcceleration(m->m_, d->d_);
+}
+
+
+void py_mj_fwdConstraint(const PyMjModel* m, PyMjData* d)
+{
+    mj_fwdConstraint(m->m_, d->d_);
+}
+
+
+void py_mj_Euler(const PyMjModel* m, PyMjData* d)
+{
+    mj_Euler(m->m_, d->d_);
+}
+
+
+void py_mj_checkPos(const PyMjModel* m, PyMjData* d)
+{
+    mj_checkPos(m->m_, d->d_);
+}
+
+void py_mj_checkVel(const PyMjModel* m, PyMjData* d)
+{
+    mj_checkVel(m->m_, d->d_);
+}
+
+void py_mj_checkAcc(const PyMjModel* m, PyMjData* d)
+{
+    mj_checkAcc(m->m_, d->d_);
+}
+
+void py_mj_kinematics(const PyMjModel* m, PyMjData* d)
+{
+    mj_kinematics(m->m_, d->d_);
+}
+
+void py_mj_comPos(const PyMjModel* m, PyMjData* d)
+{
+    mj_comPos(m->m_, d->d_);
+}
+
+void py_mj_collision(const PyMjModel* m, PyMjData* d)
+{
+    mj_collision(m->m_, d->d_);
 }
 
 
