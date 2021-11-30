@@ -1,5 +1,8 @@
 # pymujoco [![Software License](https://img.shields.io/hexpm/l/plug.svg)](https://www.apache.org/licenses/LICENSE-2.0) 
-Python bindings for open source MuJoCo using pybind11.
+
+`pymujoco`-python bindings for [MuJoCo](http://mujoco.org/) simulator generated using pybind11.
+
+## Usage
 
 ```
 from pymujoco import *
