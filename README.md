@@ -2,6 +2,8 @@
 
 `pymujoco`-python bindings for [MuJoCo](http://mujoco.org/) simulator generated using pybind11.
 
+There is also a preliminary [colab](https://colab.research.google.com/drive/1jJfwcBDRcY3oXLawX2HLDFTDOIyHNdKQ?usp=sharing) that allows headless rendering using EGL (cannot restart the EGL context at the moment).
+
 ## Usage
 
 ```
