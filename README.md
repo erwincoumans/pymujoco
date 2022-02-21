@@ -30,3 +30,13 @@ mj_deleteModel(m)
 
 mjv_delete_renderer(r)
 ```
+
+## [Changelog](#GrocerEase)
+
+Major releases, PR's, and Issues are listed here.
+
+| Added/Modified      | Author(s)    |                      Details                     | Date        |
+| :-----------------: | :----------: | :----------------------------------------------: | :---------: |     
+| Release 0.0.1       | Erwin Coumans| Compiles on `Windows` with Python 3.7            | 11/11/21    |
+| Release 0.0.2       | Erwin Coumans| Compiles on `Windows` with Python 3.8            | 16/11/21    |
+
